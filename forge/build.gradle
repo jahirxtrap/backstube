@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'idea'
-    id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
     id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
     id 'me.modmuss50.mod-publish-plugin' version '0.6.3'
 }
@@ -12,6 +12,7 @@ base.archivesName = mod_id
 
 dependencies {
     minecraft "net.minecraftforge:forge:${forge_version}"
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     compileOnly project(":common")
 
     implementation(jarJar("io.github.jahirxtrap:configlibtxf:[${configlibtxf_version}-forge,)")) {
@@ -93,19 +94,20 @@ processResources {
         expand replaceProperties
     }
     from project(":common").sourceSets.main.resources
-    exclude '**/data/fabric/**', '**/data/neoforge/**'
+    exclude '**/data/c/**', '**/data/fabric/**'
 }
 
 tasks.jarJar.setArchiveClassifier('')
+tasks.jarJar.finalizedBy('reobfJarJar')
 jar.finalizedBy('jarJar')
 
 publishMods {
     file = tasks.jarJar.archiveFile
     displayName = "${mod_name} ${project.version}"
     type = STABLE
-    modLoaders.addAll("forge")
+    modLoaders.addAll("forge", "neoforge")
     changelog = rootProject.file("CHANGELOG.md").text
-    def gameVersions = ["1.21.1"]
+    def gameVersions = ["1.20", "1.20.1"]
 
     curseforge {
         accessToken = System.getenv("CURSEFORGE_TOKEN")

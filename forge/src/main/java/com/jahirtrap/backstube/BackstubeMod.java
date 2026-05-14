@@ -11,8 +11,8 @@ public class BackstubeMod {
 
     public static final String MODID = "backstube";
 
-    public BackstubeMod(FMLJavaModLoadingContext context) {
-        IEventBus bus = context.getModEventBus();
+    public BackstubeMod() {
+        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 
         TXFConfig.init(MODID, ModConfig.class);
     }
