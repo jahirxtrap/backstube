@@ -92,13 +92,13 @@ publishMods {
 
     curseforge {
         accessToken = System.getenv("CURSEFORGE_TOKEN")
-        projectId = ""
+        projectId = "1543327"
         minecraftVersions.addAll(gameVersions)
     }
 
     modrinth {
         accessToken = System.getenv("MODRINTH_TOKEN")
-        projectId = ""
+        projectId = "j0ysmZtJ"
         minecraftVersions.addAll(gameVersions)
     }
 }
