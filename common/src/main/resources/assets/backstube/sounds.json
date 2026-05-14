@@ -1,0 +1,11 @@
+{
+  "music_disc.in_the_quartz_pool": {
+    "category": "record",
+    "sounds": [
+      {
+        "name": "backstube:music/in_the_quartz_pool",
+        "stream": true
+      }
+    ]
+  }
+}
