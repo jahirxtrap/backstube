@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'idea'
-    id 'net.fabricmc.fabric-loom' version '1.15-SNAPSHOT'
+    id 'fabric-loom' version '1.13-SNAPSHOT'
     id 'me.modmuss50.mod-publish-plugin' version '0.6.3'
 }
 
@@ -17,17 +17,22 @@ repositories {
 
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
-    implementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
-    implementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
     compileOnly project(":common")
 
-    include(implementation("io.github.jahirxtrap:configlibtxf:${configlibtxf_version}-fabric"))
+    include(modImplementation("io.github.jahirxtrap:configlibtxf:${configlibtxf_version}-fabric"))
 }
 
 loom {
     def aw = file("src/main/resources/${mod_id}.aw")
     if (aw.exists()) {
         accessWidenerPath.set(aw)
+    }
+    mixin {
+        useLegacyMixinAp.set(true)
+        defaultRefmapName.set("${mod_id}.refmap.json")
     }
     runs {
         client {
@@ -63,13 +68,15 @@ processResources {
     exclude '**/data/forge/**', '**/data/neoforge/**'
 }
 
+jar.finalizedBy('remapJar')
+
 publishMods {
-    file = tasks.jar.archiveFile
+    file = remapJar.archiveFile
     displayName = "${mod_name} ${project.version}"
     type = BETA
     modLoaders.addAll("fabric", "quilt")
     changelog = rootProject.file("CHANGELOG.md").text
-    def gameVersions = ["26.1", "26.1.1", "26.1.2"]
+    def gameVersions = ["1.21.11"]
 
     curseforge {
         accessToken = System.getenv("CURSEFORGE_TOKEN")
