@@ -19,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(JukeboxSongPlayer.class)
 public abstract class JukeboxSongPlayerMixin {
+
     @Shadow
     private long ticksSinceSongStarted;
     @Shadow
@@ -28,21 +29,21 @@ public abstract class JukeboxSongPlayerMixin {
     private BlockPos blockPos;
 
     @Unique
-    private int backstube$timesLooped = 0;
+    private int timesLooped = 0;
 
     @Inject(method = "play", at = @At("HEAD"))
-    private void backstube$resetLoopCount(LevelAccessor level, Holder<JukeboxSong> song, CallbackInfo ci) {
-        this.backstube$timesLooped = 0;
+    private void play(LevelAccessor level, Holder<JukeboxSong> song, CallbackInfo ci) {
+        this.timesLooped = 0;
     }
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
-    private void backstube$loop(LevelAccessor level, BlockState blockState, CallbackInfo ci) {
+    private void tick(LevelAccessor level, BlockState blockState, CallbackInfo ci) {
         if (level.isClientSide()) return;
         if (this.song == null || !this.song.value().hasFinished(this.ticksSinceSongStarted)) return;
         boolean infinite = ModConfig.jukeboxLoopInfinite;
         int max = ModConfig.jukeboxLoopCount;
-        if (!infinite && this.backstube$timesLooped >= max) return;
-        if (!infinite) this.backstube$timesLooped++;
+        if (!infinite && this.timesLooped >= max) return;
+        if (!infinite) this.timesLooped++;
         this.ticksSinceSongStarted = 0L;
         int songId = level.registryAccess().lookupOrThrow(Registries.JUKEBOX_SONG).getId(this.song.value());
         level.levelEvent(null, 1010, this.blockPos, songId);

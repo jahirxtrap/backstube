@@ -19,7 +19,7 @@ import java.util.Map;
 public abstract class ResourceManagerRegistryLoadTaskMixin {
 
     @Redirect(method = "lambda$load$0", at = @At(value = "INVOKE", target = "Lnet/minecraft/resources/FileToIdConverter;listMatchingResources(Lnet/minecraft/server/packs/resources/ResourceManager;)Ljava/util/Map;"))
-    private Map<Identifier, Resource> backstube$injectMusicDiscs(FileToIdConverter lister, ResourceManager rm) {
+    private Map<Identifier, Resource> injectMusicDiscs(FileToIdConverter lister, ResourceManager rm) {
         Map<Identifier, Resource> original = lister.listMatchingResources(rm);
         ResourceKey<? extends Registry<?>> key = ((ResourceManagerRegistryLoadTask<?>) (Object) this).registryKey();
         if (!Registries.JUKEBOX_SONG.equals(key)) return original;

@@ -27,9 +27,7 @@ import java.util.Optional;
 
 @Mixin(LevelEventHandler.class)
 public abstract class LevelEventHandlerMixin {
-    @Shadow
-    @Final
-    private Minecraft minecraft;
+
     @Shadow
     @Final
     private ClientLevel level;
@@ -44,12 +42,12 @@ public abstract class LevelEventHandlerMixin {
     protected abstract void notifyNearbyEntities(Level level, BlockPos pos, boolean isPlaying);
 
     @Unique
-    private static final Identifier BACKSTUBE_DISC_PLACEHOLDER = Identifier.fromNamespaceAndPath("backstube", "disc");
+    private static final Identifier DISC_PLACEHOLDER = Identifier.fromNamespaceAndPath("backstube", "disc");
 
     @Inject(method = "playJukeboxSong", at = @At("HEAD"), cancellable = true)
-    private void backstube$overrideJukeboxSound(Holder<JukeboxSong> songHolder, BlockPos pos, CallbackInfo ci) {
+    private void playJukeboxSong(Holder<JukeboxSong> songHolder, BlockPos pos, CallbackInfo ci) {
         JukeboxSong song = songHolder.value();
-        if (!BACKSTUBE_DISC_PLACEHOLDER.equals(song.soundEvent().value().location())) return;
+        if (!DISC_PLACEHOLDER.equals(song.soundEvent().value().location())) return;
         Optional<ResourceKey<JukeboxSong>> key = songHolder.unwrapKey();
         if (key.isEmpty()) return;
         Identifier discId = key.get().identifier();
@@ -59,10 +57,11 @@ public abstract class LevelEventHandlerMixin {
                 .orElse(DiscSound.DEFAULT);
         Identifier soundLocation = config.resolveName(discId);
         this.stopJukeboxSong(pos);
+        Minecraft mc = Minecraft.getInstance();
         SoundInstance instance = new BackstubeDiscSoundInstance(soundLocation, config, Vec3.atCenterOf(pos));
         this.playingJukeboxSongs.put(pos, instance);
-        this.minecraft.getSoundManager().play(instance);
-        this.minecraft.gui.setNowPlaying(song.description());
+        mc.getSoundManager().play(instance);
+        mc.gui.setNowPlaying(song.description());
         this.notifyNearbyEntities(this.level, pos, true);
         ci.cancel();
     }

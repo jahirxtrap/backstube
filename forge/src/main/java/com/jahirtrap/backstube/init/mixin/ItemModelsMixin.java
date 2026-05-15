@@ -14,12 +14,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ItemModels.class)
 public abstract class ItemModelsMixin {
+
     @Shadow
     @SuppressWarnings("ShadowTarget")
     private static ExtraCodecs.LateBoundIdMapper<Identifier, MapCodec<? extends ItemModel.Unbaked>> ID_MAPPER;
 
     @Inject(method = "bootstrap", at = @At("TAIL"))
-    private static void backstube$registerCustomTypes(CallbackInfo ci) {
+    private static void bootstrap(CallbackInfo ci) {
         ModItemModels.TYPES.forEach(ID_MAPPER::put);
     }
 }

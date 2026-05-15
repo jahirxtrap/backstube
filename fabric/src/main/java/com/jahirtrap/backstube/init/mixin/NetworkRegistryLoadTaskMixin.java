@@ -18,7 +18,7 @@ import java.util.Optional;
 public abstract class NetworkRegistryLoadTaskMixin {
 
     @Redirect(method = "lambda$load$1", at = @At(value = "INVOKE", target = "Lnet/minecraft/resources/RegistryLoadTask$PendingRegistration;findAndLoadFromResource(Lcom/mojang/serialization/Decoder;Lnet/minecraft/resources/RegistryOps;Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/resources/FileToIdConverter;Lnet/minecraft/server/packs/resources/ResourceProvider;)Lcom/mojang/datafixers/util/Either;"))
-    private static <T> Either<T, Exception> backstube$injectMusicDisc(Decoder<T> elementDecoder, RegistryOps<JsonElement> ops, ResourceKey<T> elementKey, FileToIdConverter converter, ResourceProvider resourceProvider) {
+    private static <T> Either<T, Exception> injectMusicDisc(Decoder<T> elementDecoder, RegistryOps<JsonElement> ops, ResourceKey<T> elementKey, FileToIdConverter converter, ResourceProvider resourceProvider) {
         if (elementKey.isFor(Registries.JUKEBOX_SONG)) {
             Optional<Resource> disc = ModJukeboxSongs.findDiscAsJukeboxSong(elementKey, resourceProvider);
             if (disc.isPresent()) {
