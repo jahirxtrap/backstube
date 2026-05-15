@@ -20,12 +20,7 @@ public class ModContent {
 
     public static final DeferredItem<Item> MUSIC_DISC = registerItem("music_disc", Item::new, new Item.Properties().stacksTo(1));
 
-    public static final DeferredHolder<SoundEvent, SoundEvent> SOUND_BRIGHT_CRASH = registerSound("music_disc.bright_crash");
-    public static final DeferredHolder<SoundEvent, SoundEvent> SOUND_HOLLOW_PULSE = registerSound("music_disc.hollow_pulse");
-    public static final DeferredHolder<SoundEvent, SoundEvent> SOUND_IN_THE_QUARTZ_POOL = registerSound("music_disc.in_the_quartz_pool");
-    public static final DeferredHolder<SoundEvent, SoundEvent> SOUND_QUIET_PINES = registerSound("music_disc.quiet_pines");
-    public static final DeferredHolder<SoundEvent, SoundEvent> SOUND_STEEL_TEARS = registerSound("music_disc.steel_tears");
-    public static final DeferredHolder<SoundEvent, SoundEvent> SOUND_TWILIGHT_HIKE = registerSound("music_disc.twilight_hike");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SOUND_DISC = registerSound("disc");
 
     private static DeferredHolder<SoundEvent, SoundEvent> registerSound(String name) {
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(Identifier.fromNamespaceAndPath(MODID, name)));

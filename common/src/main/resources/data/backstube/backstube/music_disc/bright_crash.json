@@ -1,8 +1,7 @@
 {
-  "sound_event": "backstube:music_disc.bright_crash",
   "title": "Bright Crash",
   "artist": "jahirtrap",
-  "length_in_seconds": 60.0,
+  "length_in_seconds": 46.32,
   "comparator_output": 1,
   "rarity": "rare"
 }

@@ -9,7 +9,8 @@
     "ResourceManagerRegistryLoadTaskMixin"
   ],
   "client": [
-    "ItemModelsMixin"
+    "ItemModelsMixin",
+    "LevelEventHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

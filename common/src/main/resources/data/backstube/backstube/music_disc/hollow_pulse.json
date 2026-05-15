@@ -1,8 +1,7 @@
 {
-  "sound_event": "backstube:music_disc.hollow_pulse",
   "title": "Hollow Pulse",
   "artist": "jahirtrap",
-  "length_in_seconds": 60.0,
+  "length_in_seconds": 59.22,
   "comparator_output": 1,
   "rarity": "rare"
 }

@@ -48,6 +48,7 @@ public class ModJukeboxSongs {
                 String artist = extractText(json.get("artist"));
                 String title = extractText(json.get("title"));
                 json.addProperty("description", artist + " - " + title);
+                json.addProperty("sound_event", "backstube:disc");
                 return new ByteArrayInputStream(json.toString().getBytes(StandardCharsets.UTF_8));
             } catch (IOException e) {
                 throw new IOException("Failed to transform Backstube disc JSON", e);
