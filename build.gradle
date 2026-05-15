@@ -58,7 +58,8 @@ subprojects {
                         url = mod_url
                         licenses {
                             license {
-                                name = mod_license
+                                name = 'MIT License'
+                                url = 'https://opensource.org/licenses/MIT'
                             }
                         }
                         developers {
