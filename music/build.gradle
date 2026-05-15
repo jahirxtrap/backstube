@@ -48,7 +48,7 @@ processResources {
 publishMods {
     file = tasks.jar.archiveFile
     displayName = "${mod_name} ${project.version}"
-    type = BETA
+    type = STABLE
     modLoaders.addAll("fabric", "quilt", "forge", "neoforge")
     changelog = file("CHANGELOG.md").text
     def gameVersions = ["26.1", "26.1.1", "26.1.2"]
