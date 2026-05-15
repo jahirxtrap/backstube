@@ -1,0 +1,73 @@
+plugins {
+    id 'java'
+    id 'me.modmuss50.mod-publish-plugin' version '0.6.3'
+}
+
+base.archivesName = mod_id
+
+jar {
+    manifest {
+        attributes([
+                'Specification-Title'     : mod_name,
+                'Specification-Vendor'    : mod_author,
+                'Specification-Version'   : project.jar.archiveVersion,
+                'Implementation-Title'    : project.name,
+                'Implementation-Version'  : project.jar.archiveVersion,
+                'Implementation-Vendor'   : mod_author,
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                'Timestamp'               : System.currentTimeMillis(),
+                'Built-On-Java'           : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
+                'Built-On-Minecraft'      : minecraft_version
+        ])
+    }
+}
+
+def resourceTargets = ['fabric.mod.json', 'META-INF/mods.toml', 'META-INF/neoforge.mods.toml', 'pack.mcmeta']
+def replaceProperties = [
+        mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: version,
+        mod_author: mod_author, mod_description: mod_description,
+        mod_url: mod_url, mod_issues: mod_issues,
+        backstube_version_range: backstube_version_range,
+        fabric_loader_version_range: fabric_loader_version_range,
+        fabric_minecraft_version_range: fabric_minecraft_version_range,
+        forge_loader_version_range: forge_loader_version_range,
+        forge_version_range: forge_version_range,
+        forge_minecraft_version_range: forge_minecraft_version_range,
+        neoforge_loader_version_range: neoforge_loader_version_range,
+        neoforge_version_range: neoforge_version_range,
+        neoforge_minecraft_version_range: neoforge_minecraft_version_range
+]
+
+processResources {
+    inputs.properties replaceProperties
+    filesMatching(resourceTargets) {
+        expand replaceProperties
+    }
+}
+
+publishMods {
+    file = tasks.jar.archiveFile
+    displayName = "${mod_name} ${project.version}"
+    type = BETA
+    modLoaders.addAll("fabric", "quilt", "forge", "neoforge")
+    changelog = file("CHANGELOG.md").text
+    def gameVersions = ["26.1", "26.1.1", "26.1.2"]
+
+    curseforge {
+        accessToken = System.getenv("CURSEFORGE_TOKEN")
+        projectId = ""
+        minecraftVersions.addAll(gameVersions)
+    }
+
+    modrinth {
+        accessToken = System.getenv("MODRINTH_TOKEN")
+        projectId = ""
+        minecraftVersions.addAll(gameVersions)
+    }
+}
+
+["publishCurseforge", "publishModrinth", "publishMods"].each { task ->
+    tasks.named(task) {
+        onlyIf { gradle.startParameter.taskNames.any { it.contains("music:") } }
+    }
+}
