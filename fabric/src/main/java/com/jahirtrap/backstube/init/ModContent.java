@@ -7,8 +7,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.JukeboxSong;
-import net.minecraft.world.item.Rarity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +18,9 @@ public class ModContent {
     public static final List<Item> ITEMS = new ArrayList<>();
     public static final List<SoundEvent> SOUND_EVENTS = new ArrayList<>();
 
-    public static final Item MUSIC_DISC_IN_THE_QUARTZ_POOL = registerDisc("in_the_quartz_pool", Rarity.RARE);
+    public static final Item MUSIC_DISC = registerItem("music_disc", Item::new, new Item.Properties().stacksTo(1));
+
+    public static final SoundEvent SOUND_IN_THE_QUARTZ_POOL = registerSound("music_disc.in_the_quartz_pool");
 
     private static SoundEvent registerSound(String name) {
         var key = ResourceKey.create(Registries.SOUND_EVENT, Identifier.fromNamespaceAndPath(MODID, name));
@@ -35,12 +35,6 @@ public class ModContent {
         var item = Registry.register(BuiltInRegistries.ITEM, key, function.apply(itemProp.setId(key)));
         ITEMS.add(item);
         return item;
-    }
-
-    private static Item registerDisc(String name, Rarity rarity) {
-        registerSound("music_disc." + name);
-        var songKey = ResourceKey.create(Registries.JUKEBOX_SONG, Identifier.fromNamespaceAndPath(MODID, name));
-        return registerItem("music_disc_" + name, Item::new, new Item.Properties().stacksTo(1).rarity(rarity).jukeboxPlayable(songKey));
     }
 
     public static void init() {

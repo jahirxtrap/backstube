@@ -1,4 +1,5 @@
 {
-  "item.backstube.music_disc_in_the_quartz_pool": "Disco musical",
+  "item.backstube.music_disc": "Disco de música",
+  "itemGroup.backstube.tab_backstube": "Backstube",
   "jukebox_song.backstube.in_the_quartz_pool": "jahirtrap - In The Quartz Pool"
 }

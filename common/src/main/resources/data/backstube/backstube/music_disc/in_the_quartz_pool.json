@@ -1,0 +1,9 @@
+{
+  "sound_event": "backstube:music_disc.in_the_quartz_pool",
+  "title": "In The Quartz Pool",
+  "artist": "jahirtrap",
+  "length_in_seconds": 84.26,
+  "comparator_output": 1,
+  "rarity": "rare",
+  "texture": "minecraft:item/music_disc_11"
+}
