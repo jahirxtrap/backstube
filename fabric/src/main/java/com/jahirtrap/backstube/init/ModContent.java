@@ -20,7 +20,12 @@ public class ModContent {
 
     public static final Item MUSIC_DISC = registerItem("music_disc", Item::new, new Item.Properties().stacksTo(1));
 
+    public static final SoundEvent SOUND_BRIGHT_CRASH = registerSound("music_disc.bright_crash");
+    public static final SoundEvent SOUND_HOLLOW_PULSE = registerSound("music_disc.hollow_pulse");
     public static final SoundEvent SOUND_IN_THE_QUARTZ_POOL = registerSound("music_disc.in_the_quartz_pool");
+    public static final SoundEvent SOUND_QUIET_PINES = registerSound("music_disc.quiet_pines");
+    public static final SoundEvent SOUND_STEEL_TEARS = registerSound("music_disc.steel_tears");
+    public static final SoundEvent SOUND_TWILIGHT_HIKE = registerSound("music_disc.twilight_hike");
 
     private static SoundEvent registerSound(String name) {
         var key = ResourceKey.create(Registries.SOUND_EVENT, Identifier.fromNamespaceAndPath(MODID, name));
