@@ -1,6 +1,9 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "backstube:item/music_disc"
+    "type": "backstube:music_disc",
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "backstube:item/music_disc"
+    }
   }
 }

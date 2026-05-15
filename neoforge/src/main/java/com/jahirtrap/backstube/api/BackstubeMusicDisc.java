@@ -27,7 +27,7 @@ public record BackstubeMusicDisc(
         float lengthInSeconds,
         int comparatorOutput,
         Rarity rarity,
-        Optional<Identifier> texture
+        Optional<Identifier> model
 ) {
     public static final ResourceKey<Registry<BackstubeMusicDisc>> REGISTRY_KEY =
             ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath("backstube", "music_disc"));
@@ -39,7 +39,7 @@ public record BackstubeMusicDisc(
             ExtraCodecs.POSITIVE_FLOAT.fieldOf("length_in_seconds").forGetter(BackstubeMusicDisc::lengthInSeconds),
             ExtraCodecs.intRange(0, 15).optionalFieldOf("comparator_output", 1).forGetter(BackstubeMusicDisc::comparatorOutput),
             Rarity.CODEC.optionalFieldOf("rarity", Rarity.RARE).forGetter(BackstubeMusicDisc::rarity),
-            Identifier.CODEC.optionalFieldOf("texture").forGetter(BackstubeMusicDisc::texture)
+            Identifier.CODEC.optionalFieldOf("model").forGetter(BackstubeMusicDisc::model)
     ).apply(i, BackstubeMusicDisc::new));
 
     private static final StreamCodec<ByteBuf, Optional<Identifier>> OPTIONAL_ID_STREAM_CODEC =
@@ -67,7 +67,7 @@ public record BackstubeMusicDisc(
             buf.writeFloat(value.lengthInSeconds);
             buf.writeVarInt(value.comparatorOutput);
             Rarity.STREAM_CODEC.encode(buf, value.rarity);
-            OPTIONAL_ID_STREAM_CODEC.encode(buf, value.texture);
+            OPTIONAL_ID_STREAM_CODEC.encode(buf, value.model);
         }
     };
 

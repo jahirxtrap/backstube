@@ -7,6 +7,9 @@
     "NetworkRegistryLoadTaskMixin",
     "ResourceManagerRegistryLoadTaskMixin"
   ],
+  "client": [
+    "ItemModelsMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }
