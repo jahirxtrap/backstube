@@ -30,6 +30,6 @@ issueTrackerURL = "${mod_issues}"
 [[dependencies.${mod_id}]]
     modId = "backstube"
     mandatory = true
-    versionRange = "${backstube_version_range}"
+    versionRange = "[${backstube_version}-neoforge,)"
     ordering = "AFTER"
     side = "BOTH"

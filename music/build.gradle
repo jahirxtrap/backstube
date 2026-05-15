@@ -27,7 +27,7 @@ def replaceProperties = [
         mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: version,
         mod_author: mod_author, mod_description: mod_description,
         mod_url: mod_url, mod_issues: mod_issues,
-        backstube_version_range: backstube_version_range,
+        backstube_version: backstube_version,
         fabric_loader_version_range: fabric_loader_version_range,
         fabric_minecraft_version_range: fabric_minecraft_version_range,
         forge_loader_version_range: forge_loader_version_range,

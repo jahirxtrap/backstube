@@ -17,6 +17,6 @@
 	"depends": {
 		"fabricloader": "${fabric_loader_version_range}",
 		"minecraft": "${fabric_minecraft_version_range}",
-		"backstube": "${backstube_version_range}"
+		"backstube": ">=${backstube_version}-fabric"
 	}
 }
