@@ -80,7 +80,7 @@ Example: disc id `mymod:cool_song` → audio at `assets/mymod/sounds/records/coo
 Minecraft has strict requirements for audio playback:
 
 1. **Codec**: OGG Vorbis (NOT Opus). Files in Opus container play silently.
-2. **Channels**: mono (1 channel). Stereo audio is not subject to 3D distance attenuation — it would play at constant volume regardless of how far the player is from the jukebox.
+2. **Channels**: mono (1 channel). Stereo audio is not subject to 3D distance attenuation (it plays at constant volume regardless of how far the player is from the jukebox).
 
 Convert any source audio to Vorbis mono:
 ```bash
@@ -93,9 +93,30 @@ ffprobe -v error -show_entries stream=codec_name,channels -of default=noprint_wr
 # Expected: codec_name=vorbis, channels=1
 ```
 
+### Loudness normalization
+
+Mojang doesn't publish an official loudness standard for music discs. Measured vanilla discs sit around **-15 to -17 dB mean volume** (roughly **-16 LUFS** integrated). Normalizing your audio to a consistent target keeps the volume even across your collection and avoids jarring jumps when switching discs.
+
+Recommended target:
+
+- **Integrated loudness**: -16 LUFS
+- **True peak**: -1.5 dBTP (margin against clipping)
+
+Apply with ffmpeg's `loudnorm` filter (two-pass for accuracy, `linear=true` to only adjust gain without compressing dynamics):
+
+```bash
+# Pass 1: measure
+ffmpeg -i input.ogg -af "loudnorm=I=-16:TP=-1.5:LRA=11:print_format=json" -f null -
+
+# Pass 2: apply (substitute the measured values from pass 1)
+ffmpeg -i input.ogg -af "loudnorm=I=-16:TP=-1.5:LRA=11:measured_I=<I>:measured_TP=<TP>:measured_LRA=<LRA>:measured_thresh=<thresh>:offset=<offset>:linear=true" -ac 1 -c:a libvorbis -q:a 5 output.ogg
+```
+
+`linear=true` preserves the original dynamics by applying only a single gain offset. If the file is too out-of-range for pure linear scaling, ffmpeg falls back to dynamic mode (slight compression).
+
 ### Creating audio in the browser
 
-[backstube.cc](https://backstube.cc) is a Strudel-based REPL that bakes patterns straight to `.ogg` files compatible with this format requirement — no audio tooling needed.
+[backstube.cc](https://backstube.cc) is a Strudel-based REPL that bakes patterns straight to `.ogg` files compatible with the format requirements. It also handles **mono conversion** and **loudness normalization** automatically, so the output is ready to drop into `assets/<ns>/sounds/records/` without further processing.
 
 ---
 
