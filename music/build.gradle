@@ -55,14 +55,16 @@ publishMods {
 
     curseforge {
         accessToken = System.getenv("CURSEFORGE_TOKEN")
-        projectId = ""
+        projectId = "1543919"
         minecraftVersions.addAll(gameVersions)
+        requires("backstube")
     }
 
     modrinth {
         accessToken = System.getenv("MODRINTH_TOKEN")
-        projectId = ""
+        projectId = "KhiDCJJD"
         minecraftVersions.addAll(gameVersions)
+        requires("backstube")
     }
 }
 
