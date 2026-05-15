@@ -4,6 +4,8 @@
   "package": "com.jahirtrap.backstube.init.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "NetworkRegistryLoadTaskMixin",
+    "ResourceManagerRegistryLoadTaskMixin"
   ],
   "injectors": {
     "defaultRequire": 1

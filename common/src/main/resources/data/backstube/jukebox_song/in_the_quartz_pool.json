@@ -1,8 +1,0 @@
-{
-  "sound_event": "backstube:music_disc.in_the_quartz_pool",
-  "description": {
-    "translate": "jukebox_song.backstube.in_the_quartz_pool"
-  },
-  "length_in_seconds": 85,
-  "comparator_output": 1
-}

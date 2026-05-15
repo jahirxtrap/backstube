@@ -27,5 +27,6 @@
 		"minecraft": "${minecraft_version_range}",
 		"java": ">=17",
 		"fabric-api": "*"
-	}
+	},
+	"accessWidener" : "${mod_id}.aw"
 }
