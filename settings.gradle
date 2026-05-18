@@ -24,3 +24,4 @@ rootProject.name = 'MultiLoader'
 include("common")
 include("fabric")
 include("forge")
+include("music")
