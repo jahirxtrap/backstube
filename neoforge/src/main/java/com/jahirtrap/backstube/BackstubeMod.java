@@ -1,7 +1,7 @@
 package com.jahirtrap.backstube;
 
+import com.jahirtrap.backstube.init.*;
 import com.jahirtrap.configlib.TXFConfig;
-import com.jahirtrap.backstube.init.ModConfig;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 
@@ -12,5 +12,9 @@ public class BackstubeMod {
 
     public BackstubeMod(IEventBus bus) {
         TXFConfig.init(MODID, ModConfig.class);
+        ModRegistries.init(bus);
+        ModComponents.init(bus);
+        ModContent.init(bus);
+        ModTab.init(bus);
     }
 }
