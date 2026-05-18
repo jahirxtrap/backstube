@@ -1,7 +1,7 @@
 package com.jahirtrap.backstube;
 
+import com.jahirtrap.backstube.init.*;
 import com.jahirtrap.configlib.TXFConfig;
-import com.jahirtrap.backstube.init.ModConfig;
 import net.fabricmc.api.ModInitializer;
 
 public class BackstubeMod implements ModInitializer {
@@ -11,5 +11,9 @@ public class BackstubeMod implements ModInitializer {
     @Override
     public void onInitialize() {
         TXFConfig.init(MODID, ModConfig.class);
+        ModRegistries.init();
+        ModComponents.init();
+        ModContent.init();
+        ModTab.init();
     }
 }

@@ -1,7 +1,7 @@
 package com.jahirtrap.backstube;
 
+import com.jahirtrap.backstube.init.*;
 import com.jahirtrap.configlib.TXFConfig;
-import com.jahirtrap.backstube.init.ModConfig;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -15,5 +15,9 @@ public class BackstubeMod {
         IEventBus bus = context.getModEventBus();
 
         TXFConfig.init(MODID, ModConfig.class);
+        ModRegistries.init(bus);
+        ModComponents.init(bus);
+        ModContent.init(bus);
+        ModTab.init(bus);
     }
 }

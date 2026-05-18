@@ -17,6 +17,9 @@
 	"entrypoints": {
 		"main": [
 			"com.jahirtrap.backstube.BackstubeMod"
+		],
+		"client": [
+			"com.jahirtrap.backstube.BackstubeClient"
 		]
 	},
 	"mixins": [
@@ -27,5 +30,6 @@
 		"minecraft": "${minecraft_version_range}",
 		"java": ">=17",
 		"fabric-api": "*"
-	}
+	},
+	"accessWidener" : "${mod_id}.aw"
 }

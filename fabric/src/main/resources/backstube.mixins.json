@@ -4,6 +4,12 @@
   "package": "com.jahirtrap.backstube.init.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "JukeboxSongPlayerMixin",
+    "RegistryDataLoaderMixin"
+  ],
+  "client": [
+    "ItemRendererMixin",
+    "LevelRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
