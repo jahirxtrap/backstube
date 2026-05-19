@@ -15,8 +15,10 @@ import net.minecraft.resources.RegistryFixedCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public record BackstubeMusicDisc(
@@ -26,7 +28,9 @@ public record BackstubeMusicDisc(
         int comparatorOutput,
         Rarity rarity,
         Optional<Identifier> model,
-        Optional<DiscSound> sound
+        Optional<DiscSound> sound,
+        int stackSize,
+        Optional<Identifier> item
 ) {
     public static final ResourceKey<Registry<BackstubeMusicDisc>> REGISTRY_KEY =
             ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath("backstube", "music_disc"));
@@ -38,7 +42,9 @@ public record BackstubeMusicDisc(
             ExtraCodecs.intRange(0, 15).optionalFieldOf("comparator_output", 1).forGetter(BackstubeMusicDisc::comparatorOutput),
             Rarity.CODEC.optionalFieldOf("rarity", Rarity.RARE).forGetter(BackstubeMusicDisc::rarity),
             Identifier.CODEC.optionalFieldOf("model").forGetter(BackstubeMusicDisc::model),
-            DiscSound.CODEC.optionalFieldOf("sound").forGetter(BackstubeMusicDisc::sound)
+            DiscSound.CODEC.optionalFieldOf("sound").forGetter(BackstubeMusicDisc::sound),
+            ExtraCodecs.intRange(1, Item.DEFAULT_MAX_STACK_SIZE).optionalFieldOf("stack_size", 1).forGetter(BackstubeMusicDisc::stackSize),
+            Identifier.CODEC.optionalFieldOf("item").forGetter(BackstubeMusicDisc::item)
     ).apply(i, BackstubeMusicDisc::new));
 
     private static final StreamCodec<ByteBuf, Optional<Identifier>> OPTIONAL_ID_STREAM_CODEC =
@@ -66,7 +72,9 @@ public record BackstubeMusicDisc(
                     buf.readVarInt(),
                     Rarity.STREAM_CODEC.decode(buf),
                     OPTIONAL_ID_STREAM_CODEC.decode(buf),
-                    OPTIONAL_SOUND_STREAM_CODEC.decode(buf)
+                    OPTIONAL_SOUND_STREAM_CODEC.decode(buf),
+                    buf.readVarInt(),
+                    OPTIONAL_ID_STREAM_CODEC.decode(buf)
             );
         }
 
@@ -79,6 +87,8 @@ public record BackstubeMusicDisc(
             Rarity.STREAM_CODEC.encode(buf, value.rarity);
             OPTIONAL_ID_STREAM_CODEC.encode(buf, value.model);
             OPTIONAL_SOUND_STREAM_CODEC.encode(buf, value.sound);
+            buf.writeVarInt(value.stackSize);
+            OPTIONAL_ID_STREAM_CODEC.encode(buf, value.item);
         }
     };
 
@@ -97,5 +107,89 @@ public record BackstubeMusicDisc(
 
     public Component description() {
         return Component.empty().append(this.artist).append(" - ").append(this.title);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static final class Builder {
+        private Component title;
+        private Component artist;
+        private float lengthInSeconds = -1F;
+        private int comparatorOutput = 1;
+        private Rarity rarity = Rarity.RARE;
+        private Identifier model;
+        private DiscSound sound;
+        private int stackSize = 1;
+        private Identifier item;
+
+        private Builder() {
+        }
+
+        public Builder title(Component title) {
+            this.title = title;
+            return this;
+        }
+
+        public Builder title(String literal) {
+            return title(Component.literal(literal));
+        }
+
+        public Builder artist(Component artist) {
+            this.artist = artist;
+            return this;
+        }
+
+        public Builder artist(String literal) {
+            return artist(Component.literal(literal));
+        }
+
+        public Builder lengthInSeconds(float seconds) {
+            this.lengthInSeconds = seconds;
+            return this;
+        }
+
+        public Builder comparatorOutput(int comparatorOutput) {
+            this.comparatorOutput = comparatorOutput;
+            return this;
+        }
+
+        public Builder rarity(Rarity rarity) {
+            this.rarity = rarity;
+            return this;
+        }
+
+        public Builder model(Identifier model) {
+            this.model = model;
+            return this;
+        }
+
+        public Builder sound(DiscSound sound) {
+            this.sound = sound;
+            return this;
+        }
+
+        public Builder sound(Identifier soundLocation) {
+            return sound(new DiscSound(Optional.of(soundLocation), 1F, 1F, true, 16));
+        }
+
+        public Builder stackSize(int stackSize) {
+            this.stackSize = stackSize;
+            return this;
+        }
+
+        public Builder item(Identifier item) {
+            this.item = item;
+            return this;
+        }
+
+        public BackstubeMusicDisc build() {
+            Objects.requireNonNull(title, "title is required");
+            Objects.requireNonNull(artist, "artist is required");
+            if (lengthInSeconds <= 0F) throw new IllegalStateException("lengthInSeconds must be > 0");
+            return new BackstubeMusicDisc(title, artist, lengthInSeconds, comparatorOutput, rarity,
+                    Optional.ofNullable(model), Optional.ofNullable(sound), stackSize, Optional.ofNullable(item));
+        }
     }
 }

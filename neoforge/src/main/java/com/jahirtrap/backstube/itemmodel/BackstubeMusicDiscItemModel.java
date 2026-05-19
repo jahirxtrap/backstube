@@ -31,7 +31,7 @@ public class BackstubeMusicDiscItemModel implements ItemModel {
     @Override
     public void update(ItemStackRenderState output, ItemStack item, ItemModelResolver resolver, ItemDisplayContext displayContext,
                        @Nullable ClientLevel level, @Nullable ItemOwner owner, int seed) {
-        Holder<BackstubeMusicDisc> disc = item.get(ModComponents.DISC.get());
+        Holder<BackstubeMusicDisc> disc = item.get(ModComponents.DISC);
         if (disc != null && disc.value().model().isPresent() && !TYPE_ID.equals(disc.value().model().get())) {
             Minecraft.getInstance().getModelManager().getItemModel(disc.value().model().get())
                     .update(output, item, resolver, displayContext, level, owner, seed);
