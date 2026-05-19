@@ -38,4 +38,4 @@ dependencies {
 }
 ```
 
-Replace `TAG` with the version you want (e.g. `26.1.2-0.1.0`).
+Replace `TAG` with the version you want (e.g. `26.1.2-0.1.3`).

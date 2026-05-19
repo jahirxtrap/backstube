@@ -6,9 +6,10 @@ An in-game music framework for Minecraft mods supporting **Fabric**, **Forge**, 
 
 Vanilla Minecraft hardcodes each music disc as a separate item. Backstube unifies them into one item (`backstube:music_disc`) with a `backstube:disc` data component that points to a registry entry describing the song (title, artist, length, optional model, optional sound config). The actual audio file is auto-resolved from the disc id.
 
-This means a disc can be added by:
-- A **mod** bundling data + assets (Java optional, only needed for advanced integration)
-- A **datapack + resource pack** combo — pure content, zero Java required
+A disc can be added in three ways:
+- **Data-driven** (no Java) — JSON + `.ogg` only. See [Data-Driven](Data-Driven).
+- **Pure Java** — register everything in code via `BackstubeAPI.createDisc(...)`. See [Java API](Java-API#registering-discs-from-java).
+- **Hybrid** — Java item + JSON data, or JSON data referencing an externally-registered item via the `item` field. See [Java API](Java-API) and [Data-Driven → Custom Item](Data-Driven#custom-item).
 
 ## Setup
 
@@ -41,7 +42,7 @@ dependencies {
 
 In `gradle.properties`:
 ```properties
-backstube_version=26.1.2-0.1.0
+backstube_version=26.1.2-0.1.3
 ```
 
 ### Declaring the dependency in mod metadata
@@ -63,33 +64,27 @@ backstube_version=26.1.2-0.1.0
     side = "BOTH"
 ```
 
-## Quick start
+## Minimal disc example
 
-### Adding a music disc — pure data (no Java)
+A complete data-driven disc only needs a JSON file plus an `.ogg`:
 
-1. **Disc data** at `data/<your_ns>/backstube/music_disc/<disc_id>.json`:
-   ```json
-   {
-     "title": "My Song",
-     "artist": "Author Name",
-     "length_in_seconds": 90.5
-   }
-   ```
-
-2. **Audio file** at `assets/<your_ns>/sounds/records/<disc_id>.ogg` (Vorbis mono — see [Music Discs](Music-Discs#audio-files))
-
-3. Distribute as a mod (bundled), datapack + resource pack combo, or even via `/datapack enable` on a server.
-
-The disc is now usable in-game:
-```
-/give @p backstube:music_disc[backstube:disc="<your_ns>:<disc_id>"]
+`data/example/backstube/music_disc/cool_song.json`:
+```json
+{
+  "title": "Cool Song",
+  "artist": "Author Name",
+  "length_in_seconds": 90.5
+}
 ```
 
-See [Music Discs](Music-Discs) for the full disc data format (optional fields, sound config, custom model).
+`assets/example/sounds/records/cool_song.ogg` — Vorbis mono (see [Data-Driven → Audio Files](Data-Driven#audio-files) for format requirements and normalization).
 
-### Java integration (optional)
+In-game:
+```
+/give @p backstube:music_disc[backstube:disc="example:cool_song"]
+```
 
-If your mod needs to programmatically create disc stacks, query the registry, or register its own music disc item, use the `BackstubeAPI`. See [Java API](Java-API).
+For optional fields, audio format, custom models, custom items, and integrations see [Data-Driven](Data-Driven). For code-based registration see [Java API](Java-API).
 
 ## Creating audio with Backstube Web
 

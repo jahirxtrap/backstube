@@ -1,1 +1,4 @@
-- First release
+- Added `BackstubeAPI.createDisc()` to register discs from Java code (one-line API per loader: fabric `Item`, forge `RegistryObject<Item>`, neoforge `DeferredItem<Item>`)
+- Added `BackstubeMusicDisc.builder()` fluent builder with all disc fields plus `title(String)`/`artist(String)`/`sound(Identifier)` shortcuts
+- Added optional `item` and `stack_size` fields in disc JSON for custom items and per-disc stack sizes
+- Added `BackstubeAPI.applyDiscData(stack, diskKey, holders)` to apply disc marker to any ItemStack
