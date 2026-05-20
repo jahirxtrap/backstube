@@ -2,9 +2,8 @@ package com.jahirtrap.backstube.init.mixin;
 
 import com.jahirtrap.backstube.api.BackstubeAPI;
 import com.jahirtrap.backstube.api.BackstubeMusicDisc;
-import com.jahirtrap.backstube.item.BackstubeMusicDiscItem;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Holder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.JukeboxBlock;
@@ -24,10 +23,7 @@ public abstract class JukeboxBlockMixin {
         BlockEntity be = level.getBlockEntity(pos);
         if (!(be instanceof JukeboxBlockEntity jb)) return;
         ItemStack stack = jb.getFirstItem();
-        if (!(stack.getItem() instanceof BackstubeMusicDiscItem)) return;
-        ResourceLocation discId = BackstubeAPI.readDiscId(stack);
-        if (discId == null) return;
-        BackstubeMusicDisc disc = level.registryAccess().registryOrThrow(BackstubeMusicDisc.REGISTRY_KEY).get(discId);
+        BackstubeMusicDisc disc = BackstubeAPI.readDisc(stack, level).map(Holder::value).orElse(null);
         if (disc == null) return;
         cir.setReturnValue(disc.comparatorOutput());
     }

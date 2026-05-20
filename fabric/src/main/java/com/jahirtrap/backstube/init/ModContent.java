@@ -1,12 +1,12 @@
 package com.jahirtrap.backstube.init;
 
 import com.jahirtrap.backstube.api.BackstubeAPI;
-import com.jahirtrap.backstube.item.BackstubeMusicDiscItem;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.RecordItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ public class ModContent {
 
     public static final SoundEvent SOUND_DISC = registerSound("disc");
 
-    public static final Item MUSIC_DISC = registerItem("music_disc", new BackstubeMusicDiscItem(SOUND_DISC, BackstubeAPI.discProperties()));
+    public static final Item MUSIC_DISC = registerItem("music_disc", new RecordItem(1, SOUND_DISC, BackstubeAPI.discProperties(), 0));
 
     private static SoundEvent registerSound(String name) {
         var id = new ResourceLocation(MODID, name);
