@@ -1,5 +1,7 @@
 package com.jahirtrap.backstube.init.mixin;
 
+import com.jahirtrap.backstube.api.BackstubeAPI;
+import com.jahirtrap.backstube.api.BackstubeMusicDisc;
 import com.jahirtrap.backstube.init.ModJukeboxSongs;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.FileToIdConverter;
@@ -20,10 +22,15 @@ public abstract class RegistryDataLoaderMixin {
     @Unique
     private static final String JUKEBOX_SONG_PREFIX = Registries.elementsDirPath(Registries.JUKEBOX_SONG);
 
+    @Unique
+    private static final String DISC_PREFIX = BackstubeMusicDisc.REGISTRY_KEY.location().getNamespace()
+            + "/" + BackstubeMusicDisc.REGISTRY_KEY.location().getPath();
+
     @Redirect(method = "loadContentsFromManager", at = @At(value = "INVOKE", target = "Lnet/minecraft/resources/FileToIdConverter;listMatchingResources(Lnet/minecraft/server/packs/resources/ResourceManager;)Ljava/util/Map;"))
-    private static Map<ResourceLocation, Resource> injectMusicDiscs(FileToIdConverter lister, ResourceManager rm) {
-        Map<ResourceLocation, Resource> original = lister.listMatchingResources(rm);
-        if (!JUKEBOX_SONG_PREFIX.equals(lister.prefix)) return original;
-        return ModJukeboxSongs.injectFromDiscs(rm, original);
+    private static Map<ResourceLocation, Resource> injectMusicDiscs(FileToIdConverter converter, ResourceManager manager) {
+        Map<ResourceLocation, Resource> original = converter.listMatchingResources(manager);
+        if (DISC_PREFIX.equals(converter.prefix)) return BackstubeAPI.injectCodeDiscs(converter, original);
+        if (!JUKEBOX_SONG_PREFIX.equals(converter.prefix)) return original;
+        return ModJukeboxSongs.injectFromDiscs(manager, original);
     }
 }

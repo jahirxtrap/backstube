@@ -1,4 +1,6 @@
-# Music Discs
+# Data-Driven Discs
+
+The data-driven path adds a music disc through a single JSON file plus an `.ogg` audio asset. **No Java code required** — works as a regular mod, datapack, or datapack + resource pack combo.
 
 ## Disc Data File
 
@@ -7,7 +9,7 @@ Each disc is described by a JSON file at:
 data/<namespace>/backstube/music_disc/<disc_path>.json
 ```
 
-The disc id is `<namespace>:<disc_path>` (e.g. `mymod:cool_song`).
+The disc id is `<namespace>:<disc_path>` (e.g. `example:cool_song`).
 
 ### Minimal example
 
@@ -28,14 +30,16 @@ The disc id is `<namespace>:<disc_path>` (e.g. `mymod:cool_song`).
   "length_in_seconds": 90.0,
   "comparator_output": 5,
   "rarity": "epic",
-  "model": "mymod:cool_song",
+  "model": "example:cool_song",
   "sound": {
-    "name": "mymod:custom/path",
+    "name": "example:custom/path",
     "volume": 1.0,
     "pitch": 1.0,
     "stream": true,
     "attenuation_distance": 16
-  }
+  },
+  "stack_size": 1,
+  "item": "example:cool_song"
 }
 ```
 
@@ -52,6 +56,8 @@ The disc id is `<namespace>:<disc_path>` (e.g. `mymod:cool_song`).
 | `rarity` | `enum` | | `rare` | Item rarity tooltip color: `common`, `uncommon`, `rare`, `epic` |
 | `model` | `Identifier` | | auto | Custom items model id (see [Custom Model](#custom-model)) |
 | `sound` | `string` or `object` | | auto | Audio source and playback config (see [Sound](#sound)) |
+| `stack_size` | `int` (1-64) | | `1` | Max stack size for this disc, applied per-stack via `MAX_STACK_SIZE` component |
+| `item` | `Identifier` | | `backstube:music_disc` | Custom item to use as the disc container (see [Custom Item](#custom-item)) |
 
 `title` and `artist` accept both plain strings and full `Component` objects:
 ```json
@@ -60,6 +66,19 @@ The disc id is `<namespace>:<disc_path>` (e.g. `mymod:cool_song`).
 ```json
 "title": { "text": "Styled Text", "color": "gold", "bold": true }
 ```
+```json
+"title": { "translate": "disc.example.cool_song" }
+```
+
+When using `translate`, the key is resolved from your language files at `assets/<namespace>/lang/<locale>.json`:
+```json
+{
+  "disc.example.cool_song": "Cool Song",
+  "disc.example.cool_song.artist": "Author Name"
+}
+```
+
+`Component` is the standard vanilla [Raw JSON text format](https://minecraft.wiki/w/Raw_JSON_text_format) — it supports all style fields (`color`, `bold`, `italic`, `underlined`, click/hover events, `extra` children, etc.). Use the [misode text component editor](https://misode.github.io/text-component/) to compose and preview styled components visually.
 
 ---
 
@@ -73,7 +92,7 @@ assets/<namespace>/sounds/records/<disc_path>.ogg
 ```
 where `<namespace>` and `<disc_path>` come from the disc id.
 
-Example: disc id `mymod:cool_song` → audio at `assets/mymod/sounds/records/cool_song.ogg`.
+Example: disc id `example:cool_song` → audio at `assets/example/sounds/records/cool_song.ogg`.
 
 ### File format requirements
 
@@ -116,7 +135,7 @@ ffmpeg -i input.ogg -af "loudnorm=I=-16:TP=-1.5:LRA=11:measured_I=<I>:measured_T
 
 ### Creating audio in the browser
 
-[backstube.cc](https://backstube.cc) is a Strudel-based REPL that bakes patterns straight to `.ogg` files compatible with the format requirements. It also handles **mono conversion** and **loudness normalization** automatically, so the output is ready to drop into `assets/<ns>/sounds/records/` without further processing.
+[backstube.cc](https://backstube.cc) is a Strudel-based REPL that bakes patterns straight to `.ogg` files compatible with the format requirements. It also handles **mono conversion** and **loudness normalization** automatically, so the output is ready to drop into `assets/<namespace>/sounds/records/` without further processing.
 
 ---
 
@@ -127,13 +146,13 @@ The `sound` field overrides default audio resolution and/or playback parameters.
 ### String form
 
 ```json
-"sound": "mymod:custom/song"
+"sound": "example:custom/song"
 ```
 
 Equivalent to:
 ```json
 "sound": {
-  "name": "mymod:custom/song"
+  "name": "example:custom/song"
 }
 ```
 
@@ -143,7 +162,7 @@ Useful when you want the audio file at a non-standard location but keep all othe
 
 ```json
 "sound": {
-  "name": "mymod:custom/song",
+  "name": "example:custom/song",
   "volume": 1.0,
   "pitch": 1.0,
   "stream": true,
@@ -153,7 +172,7 @@ Useful when you want the audio file at a non-standard location but keep all othe
 
 | Sub-field | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `name` | `Identifier` | `<ns>:records/<path>` | Audio file id. Resolves to `assets/<ns>/sounds/<rest>.ogg` |
+| `name` | `Identifier` | `<namespace>:records/<path>` | Audio file id. Resolves to `assets/<namespace>/sounds/<rest>.ogg` |
 | `volume` | `float` | `1.0` | Multiplier on the base jukebox volume (4.0). Higher values increase effective range |
 | `pitch` | `float` | `1.0` | Playback pitch |
 | `stream` | `boolean` | `true` | Stream the file from disk instead of preloading. Should be `true` for any file longer than a few seconds |
@@ -166,17 +185,36 @@ Useful when you want the audio file at a non-standard location but keep all othe
 By default, all discs share the generic Backstube music disc model. Set `model` to override:
 
 ```json
-"model": "mymod:cool_song"
+"model": "example:cool_song"
 ```
 
 The modder provides:
-- `assets/mymod/items/cool_song.json` (item model definition)
-- `assets/mymod/models/item/cool_song.json` (model file, can be `parent: item/generated` with custom texture)
-- `assets/mymod/textures/item/cool_song.png` (texture file)
+- `assets/example/items/cool_song.json` (item model definition)
+- `assets/example/models/item/cool_song.json` (model file, can be `parent: item/generated` with custom texture)
+- `assets/example/textures/item/cool_song.png` (texture file)
 
 This is the same 3-file workflow as any normal Minecraft item.
 
 If `model` is omitted, the generic Backstube model is used as fallback.
+
+---
+
+## Custom Item
+
+By default, all discs share the `backstube:music_disc` item. Use the `item` field to bind the disc data to a different item registered by your mod:
+
+```json
+{
+  "title": "Cool Song",
+  "artist": "Author Name",
+  "length_in_seconds": 90.0,
+  "item": "example:cool_song"
+}
+```
+
+The item `example:cool_song` must be registered by your mod (see [Java API → Registering Your Own Disc Item](Java-API#registering-your-own-disc-item)) and use `BackstubeAPI.discProperties(diskKey)` so it gets the `backstube:disc`, `RARITY`, and `jukeboxPlayable` bindings.
+
+If the referenced item doesn't exist (e.g. mod uninstalled), the disc falls back to `backstube:music_disc`.
 
 ---
 
@@ -191,7 +229,7 @@ Music discs work with all vanilla data-pack mechanisms via the `backstube:disc` 
   "name": "backstube:music_disc",
   "functions": [{
     "function": "minecraft:set_components",
-    "components": { "backstube:disc": "mymod:cool_song" }
+    "components": { "backstube:disc": "example:cool_song" }
   }]
 }
 ```
@@ -200,7 +238,7 @@ Music discs work with all vanilla data-pack mechanisms via the `backstube:disc` 
 ```json
 "sell": {
   "id": "backstube:music_disc",
-  "components": { "backstube:disc": "mymod:cool_song" }
+  "components": { "backstube:disc": "example:cool_song" }
 }
 ```
 
@@ -209,14 +247,14 @@ Music discs work with all vanilla data-pack mechanisms via the `backstube:disc` 
 {
   "items": [{
     "items": "backstube:music_disc",
-    "components": { "backstube:disc": "mymod:cool_song" }
+    "components": { "backstube:disc": "example:cool_song" }
   }]
 }
 ```
 
 ### Command
 ```
-/give @p backstube:music_disc[backstube:disc="mymod:cool_song"]
+/give @p backstube:music_disc[backstube:disc="example:cool_song"]
 ```
 
 ---
@@ -225,7 +263,7 @@ Music discs work with all vanilla data-pack mechanisms via the `backstube:disc` 
 
 `BackstubeMusicDisc` is a registry, so you can group discs with tags at:
 ```
-data/<ns>/tags/backstube/music_disc/<tag>.json
+data/<namespace>/tags/backstube/music_disc/<tag>.json
 ```
 
 Useful for picking a random disc from a group in loot tables, advancements, etc.

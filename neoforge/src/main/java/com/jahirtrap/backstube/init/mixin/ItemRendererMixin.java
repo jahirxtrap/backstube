@@ -2,7 +2,6 @@ package com.jahirtrap.backstube.init.mixin;
 
 import com.jahirtrap.backstube.api.BackstubeAPI;
 import com.jahirtrap.backstube.api.BackstubeMusicDisc;
-import com.jahirtrap.backstube.init.ModContent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
@@ -24,13 +23,13 @@ public abstract class ItemRendererMixin {
 
     @Inject(method = "getModel", at = @At("HEAD"), cancellable = true)
     private void getModel(ItemStack stack, @Nullable Level level, @Nullable LivingEntity entity, int seed, CallbackInfoReturnable<BakedModel> cir) {
-        if (!stack.is(ModContent.MUSIC_DISC)) return;
+        if (!BackstubeAPI.isDisc(stack)) return;
         BackstubeMusicDisc disc = BackstubeAPI.readDisc(stack).map(Holder::value).orElse(null);
         if (disc == null || disc.model().isEmpty()) return;
         ResourceLocation modelLoc = disc.model().get();
         ModelManager mm = Minecraft.getInstance().getModelManager();
-        BakedModel model = mm.getModel(ModelResourceLocation.inventory(modelLoc));
-        if (model != mm.getMissingModel()) {
+        BakedModel model = mm.getModel(new ModelResourceLocation(modelLoc, "standalone"));
+        if (model != null && model != mm.getMissingModel()) {
             cir.setReturnValue(model);
         }
     }

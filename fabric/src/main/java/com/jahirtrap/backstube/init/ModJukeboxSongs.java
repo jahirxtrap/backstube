@@ -3,8 +3,11 @@ package com.jahirtrap.backstube.init;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.jahirtrap.backstube.api.BackstubeAPI;
+import com.jahirtrap.backstube.api.BackstubeMusicDisc;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.repository.KnownPack;
 import net.minecraft.server.packs.resources.IoSupplier;
 import net.minecraft.server.packs.resources.Resource;
@@ -17,19 +20,37 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class ModJukeboxSongs {
-    private static final FileToIdConverter DISC_LISTER = FileToIdConverter.json("backstube/music_disc");
+    private static final FileToIdConverter DISC_CONVERTER = FileToIdConverter.json("backstube/music_disc");
 
-    public static Map<ResourceLocation, Resource> injectFromDiscs(ResourceManager rm, Map<ResourceLocation, Resource> original) {
-        Map<ResourceLocation, Resource> discs = DISC_LISTER.listMatchingResources(rm);
-        if (discs.isEmpty()) return original;
+    public static Map<ResourceLocation, Resource> injectFromDiscs(ResourceManager manager, Map<ResourceLocation, Resource> original) {
+        Map<ResourceLocation, Resource> discs = DISC_CONVERTER.listMatchingResources(manager);
+        Map<ResourceLocation, BackstubeMusicDisc> codeDiscs = BackstubeAPI.codeDiscs();
+        if (discs.isEmpty() && codeDiscs.isEmpty()) return original;
+
         Map<ResourceLocation, Resource> merged = new HashMap<>(original);
+
         for (Map.Entry<ResourceLocation, Resource> entry : discs.entrySet()) {
-            ResourceLocation id = DISC_LISTER.fileToId(entry.getKey());
+            ResourceLocation id = DISC_CONVERTER.fileToId(entry.getKey());
             ResourceLocation jukeboxFile = id.withPath("jukebox_song/" + id.getPath() + ".json");
             merged.put(jukeboxFile, wrap(entry.getValue()));
         }
+
+        if (!codeDiscs.isEmpty()) {
+            PackResources sampleSource = Stream.concat(discs.values().stream(), original.values().stream())
+                    .findFirst().map(Resource::source).orElse(null);
+            if (sampleSource != null) {
+                for (Map.Entry<ResourceLocation, BackstubeMusicDisc> entry : codeDiscs.entrySet()) {
+                    ResourceLocation id = entry.getKey();
+                    ResourceLocation jukeboxFile = id.withPath("jukebox_song/" + id.getPath() + ".json");
+                    if (merged.containsKey(jukeboxFile)) continue;
+                    merged.put(jukeboxFile, synthesizeJukeboxSong(sampleSource, entry.getValue()));
+                }
+            }
+        }
+
         return merged;
     }
 
@@ -48,6 +69,22 @@ public class ModJukeboxSongs {
             }
         };
         return new Resource(original.source(), supplier) {
+            @Override
+            public Optional<KnownPack> knownPackInfo() {
+                return Optional.empty();
+            }
+        };
+    }
+
+    private static Resource synthesizeJukeboxSong(PackResources source, BackstubeMusicDisc disc) {
+        JsonObject json = new JsonObject();
+        json.addProperty("description", disc.artist().getString() + " - " + disc.title().getString());
+        json.addProperty("sound_event", "backstube:disc");
+        json.addProperty("length_in_seconds", disc.lengthInSeconds());
+        json.addProperty("comparator_output", disc.comparatorOutput());
+        byte[] bytes = json.toString().getBytes(StandardCharsets.UTF_8);
+        IoSupplier<InputStream> supplier = () -> new ByteArrayInputStream(bytes);
+        return new Resource(source, supplier) {
             @Override
             public Optional<KnownPack> knownPackInfo() {
                 return Optional.empty();

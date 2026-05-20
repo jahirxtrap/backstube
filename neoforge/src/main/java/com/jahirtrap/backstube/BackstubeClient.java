@@ -15,7 +15,7 @@ public class BackstubeClient {
     @SubscribeEvent
     public static void onRegisterAdditional(ModelEvent.RegisterAdditional event) {
         for (ResourceLocation id : BackstubeModelLoader.findDiscModels(Minecraft.getInstance().getResourceManager())) {
-            event.register(ModelResourceLocation.inventory(id));
+            event.register(new ModelResourceLocation(id, "standalone"));
         }
     }
 }

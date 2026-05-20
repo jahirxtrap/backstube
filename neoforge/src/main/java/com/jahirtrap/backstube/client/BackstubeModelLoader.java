@@ -1,35 +1,47 @@
 package com.jahirtrap.backstube.client;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.jahirtrap.backstube.api.BackstubeAPI;
+import com.jahirtrap.backstube.api.BackstubeMusicDisc;
+import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class BackstubeModelLoader {
 
-    private static final String MODEL_DIR = "models/item";
-    private static final String DISC_PREFIX = "music_disc_";
-    private static final String JSON_EXT = ".json";
+    private static final FileToIdConverter DISC_CONVERTER = FileToIdConverter.json("backstube/music_disc");
 
     private BackstubeModelLoader() {
     }
 
-    public static Set<ResourceLocation> findDiscModels(ResourceManager rm) {
-        Map<ResourceLocation, Resource> found = rm.listResources(MODEL_DIR, path -> {
-            String p = path.getPath();
-            int slash = p.lastIndexOf('/');
-            String file = slash >= 0 ? p.substring(slash + 1) : p;
-            return file.startsWith(DISC_PREFIX) && file.endsWith(JSON_EXT);
-        });
-        Set<ResourceLocation> ids = new HashSet<>();
-        for (ResourceLocation rl : found.keySet()) {
-            String path = rl.getPath();
-            String stripped = path.substring(MODEL_DIR.length() - "item".length(), path.length() - JSON_EXT.length());
-            ids.add(ResourceLocation.fromNamespaceAndPath(rl.getNamespace(), stripped));
+    public static Set<ResourceLocation> findDiscModels(ResourceManager manager) {
+        Set<ResourceLocation> models = new HashSet<>();
+        for (Map.Entry<ResourceLocation, Resource> entry : DISC_CONVERTER.listMatchingResources(manager).entrySet()) {
+            ResourceLocation modelLoc = extractModel(entry.getValue());
+            if (modelLoc != null) models.add(modelLoc);
         }
-        return ids;
+        for (BackstubeMusicDisc disc : BackstubeAPI.codeDiscs().values()) {
+            disc.model().ifPresent(models::add);
+        }
+        return models;
+    }
+
+    private static ResourceLocation extractModel(Resource resource) {
+        try (InputStream in = resource.open()) {
+            JsonObject json = JsonParser.parseReader(new InputStreamReader(in, StandardCharsets.UTF_8)).getAsJsonObject();
+            if (!json.has("model")) return null;
+            return ResourceLocation.tryParse(json.get("model").getAsString());
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
