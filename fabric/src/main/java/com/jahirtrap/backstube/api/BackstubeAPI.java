@@ -15,6 +15,7 @@ import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.repository.KnownPack;
 import net.minecraft.server.packs.resources.IoSupplier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.item.Item;
@@ -92,7 +93,12 @@ public class BackstubeAPI {
                     .getOrThrow(msg -> new IllegalStateException("Failed to encode code-registered disc " + entry.getKey() + ": " + msg));
             byte[] bytes = json.toString().getBytes(StandardCharsets.UTF_8);
             IoSupplier<InputStream> supplier = () -> new ByteArrayInputStream(bytes);
-            merged.put(fileId, new Resource(source, supplier));
+            merged.put(fileId, new Resource(source, supplier) {
+                @Override
+                public Optional<KnownPack> knownPackInfo() {
+                    return Optional.empty();
+                }
+            });
         }
         return merged;
     }

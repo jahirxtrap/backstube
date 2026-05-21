@@ -15,6 +15,7 @@ import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.repository.KnownPack;
 import net.minecraft.server.packs.resources.IoSupplier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.item.Item;
@@ -68,6 +69,7 @@ public class BackstubeAPI {
     }
 
     public static <T extends Item> RegistryObject<T> createDisc(DeferredRegister<Item> register, Identifier id, Item.Properties properties, Function<Item.Properties, T> factory, BackstubeMusicDisc disc) {
+        ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, id);
         ResourceKey<BackstubeMusicDisc> diskKey = ResourceKey.create(BackstubeMusicDisc.REGISTRY_KEY, id);
         return register.register(id.getPath(), () -> {
             createDisc(id, disc);
@@ -75,7 +77,7 @@ public class BackstubeAPI {
                     .delayedComponent(ModComponents.DISC.get(), ctx -> ctx.getOrThrow(diskKey))
                     .delayedComponent(DataComponents.RARITY, ctx -> ctx.getOrThrow(diskKey).value().rarity())
                     .jukeboxPlayable(ResourceKey.create(Registries.JUKEBOX_SONG, id));
-            return factory.apply(enriched);
+            return factory.apply(enriched.setId(itemKey));
         });
     }
 
@@ -96,7 +98,12 @@ public class BackstubeAPI {
                     .getOrThrow(msg -> new IllegalStateException("Failed to encode code-registered disc " + entry.getKey() + ": " + msg));
             byte[] bytes = json.toString().getBytes(StandardCharsets.UTF_8);
             IoSupplier<InputStream> supplier = () -> new ByteArrayInputStream(bytes);
-            merged.put(fileId, new Resource(source, supplier));
+            merged.put(fileId, new Resource(source, supplier) {
+                @Override
+                public Optional<KnownPack> knownPackInfo() {
+                    return Optional.empty();
+                }
+            });
         }
         return merged;
     }
