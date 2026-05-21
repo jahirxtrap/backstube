@@ -70,6 +70,7 @@ public class ModJukeboxSongs {
                 String title = extractText(json.get("title"));
                 json.addProperty("description", artist + " - " + title);
                 json.addProperty("sound_event", "backstube:disc");
+                if (!json.has("comparator_output")) json.addProperty("comparator_output", 1);
                 return new ByteArrayInputStream(json.toString().getBytes(StandardCharsets.UTF_8));
             } catch (IOException e) {
                 throw new IOException("Failed to transform Backstube disc JSON", e);
