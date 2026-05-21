@@ -1,1 +1,1 @@
-- First release
+- Added unique textures for all 6 discs

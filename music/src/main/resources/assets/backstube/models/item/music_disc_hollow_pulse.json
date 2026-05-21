@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "backstube:item/music_disc_hollow_pulse"
+  }
+}
