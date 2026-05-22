@@ -1,6 +1,7 @@
 name: Generate Javadoc Markdown
 
 on:
+  workflow_dispatch:
   push:
     tags: ['*']
 
