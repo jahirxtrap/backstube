@@ -77,12 +77,17 @@ public class ModJukeboxSongs {
         };
     }
 
-    private static Resource synthesizeJukeboxSong(PackResources source, BackstubeMusicDisc disc) {
+    public static JsonObject buildJukeboxSongJson(BackstubeMusicDisc disc) {
         JsonObject json = new JsonObject();
         json.addProperty("description", disc.artist().getString() + " - " + disc.title().getString());
         json.addProperty("sound_event", "backstube:disc");
         json.addProperty("length_in_seconds", disc.lengthInSeconds());
         json.addProperty("comparator_output", disc.comparatorOutput());
+        return json;
+    }
+
+    private static Resource synthesizeJukeboxSong(PackResources source, BackstubeMusicDisc disc) {
+        JsonObject json = buildJukeboxSongJson(disc);
         byte[] bytes = json.toString().getBytes(StandardCharsets.UTF_8);
         IoSupplier<InputStream> supplier = () -> new ByteArrayInputStream(bytes);
         return new Resource(source, supplier) {

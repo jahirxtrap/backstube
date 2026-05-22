@@ -1,7 +1,6 @@
 package com.jahirtrap.backstube;
 
 import com.jahirtrap.backstube.client.BackstubeModelLoader;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
@@ -14,7 +13,7 @@ public class BackstubeClient {
 
     @SubscribeEvent
     public static void onRegisterAdditional(ModelEvent.RegisterAdditional event) {
-        for (ResourceLocation id : BackstubeModelLoader.findDiscModels(Minecraft.getInstance().getResourceManager())) {
+        for (ResourceLocation id : BackstubeModelLoader.findDiscModels()) {
             event.register(new ModelResourceLocation(id, "standalone"));
         }
     }
