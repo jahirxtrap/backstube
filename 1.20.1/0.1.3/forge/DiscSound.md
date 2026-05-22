@@ -13,26 +13,6 @@ When a disc does not provide a `sound` value, Backstube uses
 applies the documented playback defaults). When a disc provides one, every
 field is optional and falls back to the corresponding default.
 
-**Record components**
-
-- `name` — optional sound id; when absent it is resolved
-to `<discNamespace>:records/<discPath>` via
-[`resolveName(ResourceLocation)`](#resolvename-resourcelocation).
-
-- `volume` — multiplier applied on top of the base jukebox
-volume of `4.0` (default `1.0`). Higher values increase
-the effective broadcast range.
-
-- `pitch` — playback pitch (default `1.0`).
-
-- `stream` — stream the file from disk rather than
-preloading it (default `true`). Keep this enabled for any
-sound longer than a few seconds.
-
-- `attenuationDistance` — base distance for 3D falloff
-(default `16`). The effective range is
-`max(volume, 1.0) * 4.0 * attenuationDistance`.
-
 **Components:**
 
 | Name | Type |

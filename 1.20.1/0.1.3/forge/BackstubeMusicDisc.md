@@ -17,35 +17,6 @@ or both.
 Use [`builder()`](#builder) to construct an instance fluently; only
 `title`, `artist` and `lengthInSeconds` are mandatory.
 
-**Record components**
-
-- `title` — the disc title; shown in tooltips and in the
-`Now Playing` message.
-
-- `artist` — the song author.
-
-- `lengthInSeconds` — song duration; must be `> 0`
-and should match the OGG file's actual length.
-
-- `comparatorOutput` — redstone comparator strength when
-the disc is in a jukebox; must lie in `[0, 15]` (default
-`1`).
-
-- `rarity` — the `Rarity` of the item tooltip
-(default `Rarity.RARE`).
-
-- `model` — optional custom item model id; when absent the
-generic Backstube model is used.
-
-- `sound` — optional [`DiscSound`](DiscSound.md) overriding the
-audio source and playback parameters.
-
-- `stackSize` — max stack size, in `[1, 64]`
-(default `1`).
-
-- `item` — optional custom item id; when absent the
-generic `backstube:music_disc` item is used.
-
 **Components:**
 
 | Name | Type |
