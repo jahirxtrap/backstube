@@ -71,7 +71,7 @@ processResources {
 jar.finalizedBy('remapJar')
 
 publishMods {
-    file = remapJar.archiveFile
+    file = tasks.remapJar.archiveFile
     displayName = "${mod_name} ${project.version}"
     type = STABLE
     modLoaders.addAll("fabric", "quilt")
