@@ -29,29 +29,25 @@ import java.util.Optional;
  * <p>
  * Use {@link #builder()} to construct an instance fluently; only
  * {@code title}, {@code artist} and {@code lengthInSeconds} are mandatory.
- * <p>
- * <b>Record components</b>
- * <ul>
- *   <li>{@code title} &mdash; the disc title; shown in tooltips and in the
- *       {@code Now Playing} message.</li>
- *   <li>{@code artist} &mdash; the song author.</li>
- *   <li>{@code lengthInSeconds} &mdash; song duration; must be {@code > 0}
- *       and should match the OGG file's actual length.</li>
- *   <li>{@code comparatorOutput} &mdash; redstone comparator strength when
- *       the disc is in a jukebox; must lie in {@code [0, 15]} (default
- *       {@code 1}).</li>
- *   <li>{@code rarity} &mdash; the {@link Rarity} of the item tooltip
- *       (default {@link Rarity#RARE}).</li>
- *   <li>{@code model} &mdash; optional custom item model id; when absent the
- *       generic Backstube model is used.</li>
- *   <li>{@code sound} &mdash; optional {@link DiscSound} overriding the
- *       audio source and playback parameters.</li>
- *   <li>{@code stackSize} &mdash; max stack size, in {@code [1, 64]}
- *       (default {@code 1}).</li>
- *   <li>{@code item} &mdash; optional custom item id; when absent the
- *       generic {@code backstube:music_disc} item is used.</li>
- * </ul>
  *
+ * @param title            the disc title; shown in tooltips and in the
+ *                         {@code Now Playing} message
+ * @param artist           the song author
+ * @param lengthInSeconds  song duration; must be {@code > 0} and should
+ *                         match the OGG file's actual length
+ * @param comparatorOutput redstone comparator strength when the disc is in
+ *                         a jukebox; must lie in {@code [0, 15]} (default
+ *                         {@code 1})
+ * @param rarity           the {@link Rarity} of the item tooltip (default
+ *                         {@link Rarity#RARE})
+ * @param model            optional custom item model id; when absent the
+ *                         generic Backstube model is used
+ * @param sound            optional {@link DiscSound} overriding the audio
+ *                         source and playback parameters
+ * @param stackSize        max stack size, in {@code [1, 64]} (default
+ *                         {@code 1})
+ * @param item             optional custom item id; when absent the generic
+ *                         {@code backstube:music_disc} item is used
  * @see BackstubeAPI
  * @see DiscSound
  * @since 0.1.2

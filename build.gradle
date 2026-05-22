@@ -92,5 +92,13 @@ subprojects {
                 sign publishing.publications.mavenJava
             }
         }
+
+        afterEvaluate {
+            def jarJarTask = tasks.findByName('jarJar')
+            if (jarJarTask) {
+                tasks.findByName('signMavenJavaPublication')?.dependsOn(jarJarTask)
+                tasks.findByName('publishMavenJavaPublicationToStagingRepository')?.dependsOn(jarJarTask)
+            }
+        }
     }
 }
