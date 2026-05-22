@@ -18,6 +18,44 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * Immutable description of a Backstube music disc.
+ * <p>
+ * Each instance is the value of one entry in the
+ * {@code backstube:music_disc} registry. Discs can be loaded from JSON files
+ * under {@code data/<namespace>/backstube/music_disc/<path>.json}, registered
+ * from code via {@link BackstubeAPI#createDisc(ResourceLocation, BackstubeMusicDisc)}
+ * or both.
+ * <p>
+ * Use {@link #builder()} to construct an instance fluently; only
+ * {@code title}, {@code artist} and {@code lengthInSeconds} are mandatory.
+ * <p>
+ * <b>Record components</b>
+ * <ul>
+ *   <li>{@code title} &mdash; the disc title; shown in tooltips and in the
+ *       {@code Now Playing} message.</li>
+ *   <li>{@code artist} &mdash; the song author.</li>
+ *   <li>{@code lengthInSeconds} &mdash; song duration; must be {@code > 0}
+ *       and should match the OGG file's actual length.</li>
+ *   <li>{@code comparatorOutput} &mdash; redstone comparator strength when
+ *       the disc is in a jukebox; must lie in {@code [0, 15]} (default
+ *       {@code 1}).</li>
+ *   <li>{@code rarity} &mdash; the {@link Rarity} of the item tooltip
+ *       (default {@link Rarity#RARE}).</li>
+ *   <li>{@code model} &mdash; optional custom item model id; when absent the
+ *       generic Backstube model is used.</li>
+ *   <li>{@code sound} &mdash; optional {@link DiscSound} overriding the
+ *       audio source and playback parameters.</li>
+ *   <li>{@code stackSize} &mdash; max stack size, in {@code [1, 64]}
+ *       (default {@code 1}).</li>
+ *   <li>{@code item} &mdash; optional custom item id; when absent the
+ *       generic {@code backstube:music_disc} item is used.</li>
+ * </ul>
+ *
+ * @see BackstubeAPI
+ * @see DiscSound
+ * @since 0.1.2
+ */
 public record BackstubeMusicDisc(
         Component title,
         Component artist,
@@ -29,9 +67,27 @@ public record BackstubeMusicDisc(
         int stackSize,
         Optional<ResourceLocation> item
 ) {
+    /**
+     * Registry key for the {@code backstube:music_disc} data registry.
+     * <p>
+     * Mirrors {@link BackstubeAPI#discRegistryKey()} for convenience &mdash; use
+     * whichever reads better at the call site.
+     *
+     * @since 0.1.2
+     */
     public static final ResourceKey<Registry<BackstubeMusicDisc>> REGISTRY_KEY =
             ResourceKey.createRegistryKey(new ResourceLocation("backstube", "music_disc"));
 
+    /**
+     * Lowercase-string codec for {@link Rarity}.
+     * <p>
+     * Required because MC 1.20.1 does not yet provide a public {@code Rarity.CODEC};
+     * Backstube uses this codec for the {@code rarity} field of
+     * {@link #DIRECT_CODEC}. Input names are matched case-insensitively against
+     * {@link Rarity#valueOf(String)}; output names are emitted lowercase.
+     *
+     * @since 0.1.2
+     */
     public static final Codec<Rarity> RARITY_CODEC = Codec.STRING.flatXmap(
             name -> {
                 try {
@@ -43,6 +99,16 @@ public record BackstubeMusicDisc(
             r -> DataResult.success(r.name().toLowerCase(Locale.ROOT))
     );
 
+    /**
+     * Codec that serialises a full {@link BackstubeMusicDisc} as a JSON object.
+     * <p>
+     * The format matches the on-disk schema used by data-driven discs (see the
+     * package documentation for field reference). Used by the registry to load
+     * JSON files; also handy when writing custom serialisers (for example, a
+     * datapack-generated set of discs).
+     *
+     * @since 0.1.2
+     */
     public static final Codec<BackstubeMusicDisc> DIRECT_CODEC = RecordCodecBuilder.create(i -> i.group(
             ExtraCodecs.COMPONENT.fieldOf("title").forGetter(BackstubeMusicDisc::title),
             ExtraCodecs.COMPONENT.fieldOf("artist").forGetter(BackstubeMusicDisc::artist),
@@ -55,24 +121,87 @@ public record BackstubeMusicDisc(
             ResourceLocation.CODEC.optionalFieldOf("item").forGetter(BackstubeMusicDisc::item)
     ).apply(i, BackstubeMusicDisc::new));
 
+    /**
+     * Codec for a {@link Holder} reference to a registered disc.
+     * <p>
+     * Prefer this over {@link #DIRECT_CODEC} when authoring recipes, predicates
+     * or any payload that should reference an existing registry entry by id
+     * rather than embedding the whole disc value.
+     *
+     * @since 0.1.2
+     */
     public static final Codec<Holder<BackstubeMusicDisc>> CODEC = RegistryFixedCodec.create(REGISTRY_KEY);
 
+    /**
+     * Returns the song duration in game ticks.
+     * <p>
+     * Computed as {@code ceil(lengthInSeconds * 20)}; convenient when scheduling
+     * tick-based logic against the song.
+     *
+     * @return the song length expressed in ticks; always {@code > 0}
+     * @since 0.1.2
+     */
     public int lengthInTicks() {
         return Mth.ceil(this.lengthInSeconds * 20.0F);
     }
 
+    /**
+     * Returns whether the song has played to completion, given how many ticks
+     * have elapsed since playback started.
+     * <p>
+     * Uses a 20-tick grace period (one second) past {@link #lengthInTicks()} so
+     * that short rounding errors at the end of the OGG do not trigger an early
+     * stop.
+     *
+     * @param ticksElapsed ticks since the jukebox started playing this disc
+     * @return {@code true} when {@code ticksElapsed >= lengthInTicks() + 20}
+     * @since 0.1.2
+     */
     public boolean hasFinished(long ticksElapsed) {
         return ticksElapsed >= this.lengthInTicks() + 20;
     }
 
+    /**
+     * Returns the formatted "Artist - Title" component used as the disc's
+     * tooltip subtitle and {@code Now Playing} message.
+     * <p>
+     * The result is a fresh component constructed by concatenating
+     * {@link #artist()}, the literal {@code " - "} separator and {@link #title()}.
+     *
+     * @return a non-{@code null} component; never empty
+     * @since 0.1.2
+     */
     public Component description() {
         return Component.empty().append(this.artist).append(" - ").append(this.title);
     }
 
+    /**
+     * Returns a new {@link Builder} for fluently constructing a
+     * {@link BackstubeMusicDisc}.
+     * <p>
+     * The builder pre-fills sensible defaults for every optional component; only
+     * {@link Builder#title}, {@link Builder#artist} and
+     * {@link Builder#lengthInSeconds} are required before calling
+     * {@link Builder#build()}.
+     *
+     * @return a fresh builder instance; never {@code null}
+     * @since 0.1.3
+     */
     public static Builder builder() {
         return new Builder();
     }
 
+    /**
+     * Fluent builder for {@link BackstubeMusicDisc}.
+     * <p>
+     * Mandatory fields are {@code title}, {@code artist} and
+     * {@code lengthInSeconds}; all others fall back to documented defaults if
+     * left unset. Reuse a single builder for multiple discs by overriding fields
+     * between {@code build()} calls; the builder is mutable but not
+     * thread-safe.
+     *
+     * @since 0.1.3
+     */
     public static final class Builder {
         private Component title;
         private Component artist;
@@ -87,63 +216,206 @@ public record BackstubeMusicDisc(
         private Builder() {
         }
 
+        /**
+         * Sets the disc title.
+         * <p>
+         * The {@code String} overload wraps the value in
+         * {@link Component#literal(String)}.
+         *
+         * @param title the title text
+         * @return this builder
+         * @since 0.1.3
+         */
         public Builder title(Component title) {
             this.title = title;
             return this;
         }
 
+        /**
+         * Sets the disc title.
+         * <p>
+         * The {@code String} overload wraps the value in
+         * {@link Component#literal(String)}.
+         *
+         * @param literal the title text
+         * @return this builder
+         * @since 0.1.3
+         */
         public Builder title(String literal) {
             return title(Component.literal(literal));
         }
 
+        /**
+         * Sets the song artist.
+         * <p>
+         * The {@code String} overload wraps the value in
+         * {@link Component#literal(String)}.
+         *
+         * @param artist the artist text
+         * @return this builder
+         * @since 0.1.3
+         */
         public Builder artist(Component artist) {
             this.artist = artist;
             return this;
         }
 
+        /**
+         * Sets the song artist.
+         * <p>
+         * The {@code String} overload wraps the value in
+         * {@link Component#literal(String)}.
+         *
+         * @param literal the artist text
+         * @return this builder
+         * @since 0.1.3
+         */
         public Builder artist(String literal) {
             return artist(Component.literal(literal));
         }
 
+        /**
+         * Sets the song duration in seconds.
+         * <p>
+         * Must match the OGG file's actual length to within a tick or playback may
+         * be cut short or looped incorrectly. The value passed to {@link #build()}
+         * must be strictly greater than zero.
+         *
+         * @param seconds the duration
+         * @return this builder
+         * @since 0.1.3
+         */
         public Builder lengthInSeconds(float seconds) {
             this.lengthInSeconds = seconds;
             return this;
         }
 
+        /**
+         * Sets the redstone comparator output strength when the disc is in a
+         * jukebox.
+         * <p>
+         * Must be in the range {@code [0, 15]} (validated by the codec when the
+         * value is serialised). Defaults to {@code 1}.
+         *
+         * @param comparatorOutput the comparator strength
+         * @return this builder
+         * @since 0.1.3
+         */
         public Builder comparatorOutput(int comparatorOutput) {
             this.comparatorOutput = comparatorOutput;
             return this;
         }
 
+        /**
+         * Sets the {@link Rarity} used for the disc's item tooltip colour.
+         * <p>
+         * Defaults to {@link Rarity#RARE}.
+         *
+         * @param rarity the rarity
+         * @return this builder
+         * @since 0.1.3
+         */
         public Builder rarity(Rarity rarity) {
             this.rarity = rarity;
             return this;
         }
 
+        /**
+         * Sets a custom item-model id used by the rendered disc.
+         * <p>
+         * The id is resolved through the item-model registry, i.e. it must point at
+         * an entry under {@code assets/<namespace>/models/item/<path>.json}. Leaving
+         * this unset uses the generic Backstube model.
+         *
+         * @param model the model id
+         * @return this builder
+         * @since 0.1.3
+         */
         public Builder model(ResourceLocation model) {
             this.model = model;
             return this;
         }
 
+        /**
+         * Overrides the audio source and/or playback parameters.
+         * <p>
+         * The {@link ResourceLocation} overload is a shortcut that constructs a
+         * {@link DiscSound} with the supplied name and all other parameters set to
+         * their defaults ({@code volume=1.0}, {@code pitch=1.0}, {@code stream=true},
+         * {@code attenuationDistance=16}).
+         *
+         * @param sound the sound configuration
+         * @return this builder
+         * @see DiscSound
+         * @since 0.1.3
+         */
         public Builder sound(DiscSound sound) {
             this.sound = sound;
             return this;
         }
 
+        /**
+         * Overrides the audio source and/or playback parameters.
+         * <p>
+         * The {@link ResourceLocation} overload is a shortcut that constructs a
+         * {@link DiscSound} with the supplied name and all other parameters set to
+         * their defaults ({@code volume=1.0}, {@code pitch=1.0}, {@code stream=true},
+         * {@code attenuationDistance=16}).
+         *
+         * @param soundLocation the sound configuration
+         * @return this builder
+         * @see DiscSound
+         * @since 0.1.3
+         */
         public Builder sound(ResourceLocation soundLocation) {
             return sound(new DiscSound(Optional.of(soundLocation), 1F, 1F, true, 16));
         }
 
+        /**
+         * Sets the maximum stack size for the disc item.
+         * <p>
+         * Must be in the range {@code [1, 64]} (validated by the codec when the
+         * value is serialised). Defaults to {@code 1}, matching vanilla music discs.
+         *
+         * @param stackSize the max stack size
+         * @return this builder
+         * @since 0.1.3
+         */
         public Builder stackSize(int stackSize) {
             this.stackSize = stackSize;
             return this;
         }
 
+        /**
+         * Binds the disc data to a specific item id.
+         * <p>
+         * When set, {@link BackstubeAPI#discStack} and tooltips will use the given
+         * item instead of the generic {@code backstube:music_disc}. The item must
+         * exist at runtime; if it is missing, Backstube falls back to the generic
+         * item.
+         * <p>
+         * Note that {@link BackstubeAPI#createDisc(ResourceLocation, BackstubeMusicDisc)}
+         * already auto-fills this field with the registration id.
+         *
+         * @param item the item id to bind to
+         * @return this builder
+         * @since 0.1.3
+         */
         public Builder item(ResourceLocation item) {
             this.item = item;
             return this;
         }
 
+        /**
+         * Builds the immutable {@link BackstubeMusicDisc} instance.
+         *
+         * @return the constructed disc
+         * @throws NullPointerException  if {@code title} or {@code artist} was not
+         *                               set
+         * @throws IllegalStateException if {@code lengthInSeconds} was not set or
+         *                               is not strictly positive
+         * @since 0.1.3
+         */
         public BackstubeMusicDisc build() {
             Objects.requireNonNull(title, "title is required");
             Objects.requireNonNull(artist, "artist is required");
