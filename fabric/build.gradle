@@ -70,9 +70,9 @@ processResources {
 jar.finalizedBy('remapJar')
 
 publishMods {
-    file = remapJar.archiveFile
+    file = tasks.remapJar.archiveFile
     displayName = "${mod_name} ${project.version}"
-    type = BETA
+    type = STABLE
     modLoaders.addAll("fabric", "quilt")
     changelog = rootProject.file("CHANGELOG.md").text
     def gameVersions = ["1.21", "1.21.1"]
@@ -87,5 +87,15 @@ publishMods {
         accessToken = System.getenv("MODRINTH_TOKEN")
         projectId = "j0ysmZtJ"
         minecraftVersions.addAll(gameVersions)
+    }
+
+    github {
+        accessToken = System.getenv("GITHUB_TOKEN")
+        repository = "jahirxtrap/backstube"
+        commitish = 'git branch --show-current'.execute().text.trim()
+        tagName = rootProject.version
+        displayName = rootProject.version
+        additionalFiles.from { project(":forge").tasks.jarJar.archiveFile }
+        additionalFiles.from(project(":neoforge").tasks.jar.archiveFile)
     }
 }
