@@ -15,23 +15,21 @@ import java.util.Optional;
  * applies the documented playback defaults). When a disc provides one, every
  * field is optional and falls back to the corresponding default.
  * <p>
- * <b>Record components</b>
- * <ul>
- *   <li>{@code name} &mdash; optional sound id; when absent it is resolved
- *       to {@code <discNamespace>:records/<discPath>} via
- *       {@link #resolveName(Identifier)}.</li>
- *   <li>{@code volume} &mdash; multiplier applied on top of the base jukebox
- *       volume of {@code 4.0} (default {@code 1.0}). Higher values increase
- *       the effective broadcast range.</li>
- *   <li>{@code pitch} &mdash; playback pitch (default {@code 1.0}).</li>
- *   <li>{@code stream} &mdash; stream the file from disk rather than
- *       preloading it (default {@code true}). Keep this enabled for any
- *       sound longer than a few seconds.</li>
- *   <li>{@code attenuationDistance} &mdash; base distance for 3D falloff
- *       (default {@code 16}). The effective range is
- *       {@code max(volume, 1.0) * 4.0 * attenuationDistance}.</li>
- * </ul>
- *
+ * @param name                optional sound id; when absent it is resolved
+ *                            to {@code <discNamespace>:records/<discPath>}
+ *                            via {@link #resolveName(Identifier)}
+ * @param volume              multiplier applied on top of the base jukebox
+ *                            volume of {@code 4.0} (default {@code 1.0}).
+ *                            Higher values increase the effective broadcast
+ *                            range
+ * @param pitch               playback pitch (default {@code 1.0})
+ * @param stream              stream the file from disk rather than
+ *                            preloading it (default {@code true}). Keep
+ *                            this enabled for any sound longer than a few
+ *                            seconds
+ * @param attenuationDistance base distance for 3D falloff (default
+ *                            {@code 16}). The effective range is
+ *                            {@code max(volume, 1.0) * 4.0 * attenuationDistance}
  * @see BackstubeMusicDisc
  * @since 0.1.2
  */
