@@ -2,6 +2,7 @@ package com.jahirtrap.backstube.init.mixin;
 
 import com.jahirtrap.backstube.api.BackstubeAPI;
 import com.jahirtrap.backstube.api.BackstubeMusicDisc;
+import com.jahirtrap.backstube.client.BackstubeModelLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
@@ -28,7 +29,7 @@ public abstract class ItemRendererMixin {
         if (level == null) return;
         BackstubeMusicDisc disc = BackstubeAPI.readDisc(stack, level).map(Holder::value).orElse(null);
         if (disc == null || disc.model().isEmpty()) return;
-        ResourceLocation modelLoc = disc.model().get();
+        ResourceLocation modelLoc = BackstubeModelLoader.toItemModel(disc.model().get());
         ModelManager mm = Minecraft.getInstance().getModelManager();
         BakedModel model = mm.getModel(new ModelResourceLocation(modelLoc, "inventory"));
         if (model == null || model == mm.getMissingModel()) {

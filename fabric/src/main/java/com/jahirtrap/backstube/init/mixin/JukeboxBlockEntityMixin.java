@@ -4,6 +4,8 @@ import com.jahirtrap.backstube.BackstubeMod;
 import com.jahirtrap.backstube.api.BackstubeAPI;
 import com.jahirtrap.backstube.api.BackstubeMusicDisc;
 import com.jahirtrap.backstube.init.ModConfig;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.world.item.ItemStack;
@@ -30,6 +32,11 @@ public abstract class JukeboxBlockEntityMixin {
 
     @Unique
     private int timesLooped = 0;
+
+    @ModifyExpressionValue(method = {"setItem", "canPlaceItem"}, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/tags/TagKey;)Z"))
+    private boolean acceptBackstubeDisc(boolean original, @Local(argsOnly = true) ItemStack stack) {
+        return original || BackstubeAPI.isDisc(stack);
+    }
 
     @Inject(method = "startPlaying", at = @At("HEAD"), cancellable = true)
     private void startPlaying(CallbackInfo ci) {
