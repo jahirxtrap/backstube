@@ -123,7 +123,7 @@ public class BackstubeAPI {
      * @param diskKey the disc registry key the item should be bound to;
      *                must not be {@code null}
      * @return a fresh {@link Item.Properties} ready to be passed to an item
-     *         constructor; never {@code null}
+     * constructor; never {@code null}
      * @see #createDisc(DeferredRegister, ResourceLocation, Item.Properties, BackstubeMusicDisc)
      * @since 0.1.2
      */
@@ -183,7 +183,7 @@ public class BackstubeAPI {
      *                   components are applied automatically
      * @param disc       the disc data
      * @return a {@code RegistryObject<Item>} pointing at the deferred item;
-     *         never {@code null}
+     * never {@code null}
      * @see #createDisc(DeferredRegister, ResourceLocation, Item.Properties, Function, BackstubeMusicDisc)
      * @since 0.1.3
      */
@@ -211,7 +211,7 @@ public class BackstubeAPI {
      * @param disc       the disc data
      * @param <T>        the {@link Item} subclass returned by {@code factory}
      * @return a {@code RegistryObject<T>} pointing at the deferred item,
-     *         statically typed to {@code T}
+     * statically typed to {@code T}
      * @since 0.1.3
      */
     public static <T extends Item> RegistryObject<T> createDisc(DeferredRegister<Item> register, ResourceLocation id, Item.Properties properties, Function<Item.Properties, T> factory, BackstubeMusicDisc disc) {
@@ -259,7 +259,7 @@ public class BackstubeAPI {
      *                  code-registered discs or no source pack to attribute the
      *                  synthesized resources to
      * @return either {@code original} unchanged, or a fresh map containing every
-     *         original entry plus synthesized entries for code-registered discs
+     * original entry plus synthesized entries for code-registered discs
      * @since 0.1.3
      */
     public static Map<ResourceLocation, Resource> injectCodeDiscs(FileToIdConverter converter, Map<ResourceLocation, Resource> original) {
@@ -332,7 +332,7 @@ public class BackstubeAPI {
      * @param diskKey  the disc registry key
      * @param provider a {@link HolderLookup.Provider}
      * @return the disc stack, or {@link Optional#empty()} if {@code diskKey} is
-     *         unknown to the registry
+     * unknown to the registry
      * @see #discStack(Holder, HolderLookup.Provider)
      * @since 0.1.2
      */
@@ -396,7 +396,7 @@ public class BackstubeAPI {
      * @param diskKey  the disc registry key
      * @param provider a {@link HolderLookup.Provider}
      * @return {@code true} if a matching disc was found and applied,
-     *         {@code false} otherwise
+     * {@code false} otherwise
      * @since 0.1.3
      */
     public static boolean applyDiscData(ItemStack stack, ResourceKey<BackstubeMusicDisc> diskKey, HolderLookup.Provider provider) {
@@ -415,7 +415,7 @@ public class BackstubeAPI {
      * @param stack the stack to test; passing an empty stack returns
      *              {@code false}
      * @return {@code true} when the stack has the {@code backstube:disc}
-     *         component
+     * component
      * @since 0.1.3
      */
     public static boolean isDisc(ItemStack stack) {
@@ -431,7 +431,7 @@ public class BackstubeAPI {
      * @param stack the stack to inspect; passing an empty stack returns
      *              {@link Optional#empty()}
      * @return the disc holder, or {@link Optional#empty()} when the stack is
-     *         not a Backstube disc
+     * not a Backstube disc
      * @since 0.1.2
      */
     public static Optional<Holder<BackstubeMusicDisc>> readDisc(ItemStack stack) {
