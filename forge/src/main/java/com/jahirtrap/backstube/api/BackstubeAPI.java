@@ -108,7 +108,7 @@ public class BackstubeAPI {
      * {@link #createDisc(ResourceLocation, BackstubeMusicDisc)}.
      *
      * @return a fresh {@link Item.Properties} ready to be passed to a
-     *         {@link RecordItem} constructor; never {@code null}
+     * {@link RecordItem} constructor; never {@code null}
      * @see #createDisc(DeferredRegister, ResourceLocation, Item.Properties, BackstubeMusicDisc)
      * @since 0.1.2
      */
@@ -167,7 +167,7 @@ public class BackstubeAPI {
      *                   automatically
      * @param disc       the disc data
      * @return a {@code RegistryObject<RecordItem>} pointing at the deferred
-     *         item; never {@code null}
+     * item; never {@code null}
      * @see #createDisc(DeferredRegister, ResourceLocation, Item.Properties, Function, BackstubeMusicDisc)
      * @since 0.1.3
      */
@@ -196,7 +196,7 @@ public class BackstubeAPI {
      * @param <T>        the {@link RecordItem} subclass returned by
      *                   {@code factory}
      * @return a {@code RegistryObject<T>} pointing at the deferred item,
-     *         statically typed to {@code T}
+     * statically typed to {@code T}
      * @since 0.1.3
      */
     public static <T extends RecordItem> RegistryObject<T> createDisc(DeferredRegister<Item> register, ResourceLocation id, Item.Properties properties, Function<Item.Properties, T> factory, BackstubeMusicDisc disc) {
@@ -237,7 +237,7 @@ public class BackstubeAPI {
      *                  code-registered discs or no source pack to attribute the
      *                  synthesized resources to
      * @return either {@code original} unchanged, or a fresh map containing every
-     *         original entry plus synthesized entries for code-registered discs
+     * original entry plus synthesized entries for code-registered discs
      * @since 0.1.3
      */
     public static Map<ResourceLocation, Resource> injectCodeDiscs(FileToIdConverter converter, Map<ResourceLocation, Resource> original) {
@@ -303,7 +303,7 @@ public class BackstubeAPI {
      * @param diskKey  the disc registry key
      * @param provider a {@link HolderLookup.Provider}
      * @return the disc stack, or {@link Optional#empty()} if {@code diskKey} is
-     *         unknown to the registry
+     * unknown to the registry
      * @see #discStack(Holder)
      * @since 0.1.2
      */
@@ -377,7 +377,7 @@ public class BackstubeAPI {
      * @param diskKey  the disc registry key
      * @param provider a {@link HolderLookup.Provider}
      * @return {@code true} if a matching disc was found and applied,
-     *         {@code false} otherwise
+     * {@code false} otherwise
      * @since 0.1.3
      */
     public static boolean applyDiscData(ItemStack stack, ResourceKey<BackstubeMusicDisc> diskKey, HolderLookup.Provider provider) {
@@ -415,7 +415,7 @@ public class BackstubeAPI {
      *              {@link Optional#empty()}
      * @param level the level whose registry access is used to resolve the disc
      * @return the disc holder, or {@link Optional#empty()} when the stack is
-     *         not a Backstube disc or the disc is missing from the registry
+     * not a Backstube disc or the disc is missing from the registry
      * @see #readDisc(ItemStack, HolderLookup.Provider)
      * @since 0.1.2
      */
@@ -437,7 +437,7 @@ public class BackstubeAPI {
      *                 {@code Level#registryAccess()} or any
      *                 {@link net.minecraft.core.RegistryAccess} instance
      * @return the disc holder, or {@link Optional#empty()} when the stack is
-     *         not a Backstube disc or the disc is missing from the registry
+     * not a Backstube disc or the disc is missing from the registry
      * @since 0.1.2
      */
     public static Optional<Holder<BackstubeMusicDisc>> readDisc(ItemStack stack, HolderLookup.Provider provider) {
@@ -466,7 +466,7 @@ public class BackstubeAPI {
      *
      * @param stack the stack to inspect
      * @return the cached description {@link Component}, or {@code null} if the
-     *         tag is not set
+     * tag is not set
      * @since 0.1.3
      */
     public static Component readDescription(ItemStack stack) {

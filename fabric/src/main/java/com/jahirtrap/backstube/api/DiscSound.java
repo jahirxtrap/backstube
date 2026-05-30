@@ -15,6 +15,7 @@ import java.util.Optional;
  * applies the documented playback defaults). When a disc provides one, every
  * field is optional and falls back to the corresponding default.
  * <p>
+ *
  * @param name                optional sound id; when absent it is resolved
  *                            to {@code <discNamespace>:records/<discPath>}
  *                            via {@link #resolveName(ResourceLocation)}
