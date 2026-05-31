@@ -1,0 +1,38 @@
+{
+  "title": "Backstube",
+  "mcVersion": "1.21.11",
+  "modVersion": "0.1.4",
+  "generatedAt": "2026-05-31T06:56:21.668Z",
+  "classes": [
+    {
+      "name": "BackstubeAPI",
+      "order": 1,
+      "scope": "per-loader",
+      "loaders": [
+        "fabric",
+        "forge",
+        "neoforge"
+      ]
+    },
+    {
+      "name": "BackstubeMusicDisc",
+      "order": 2,
+      "scope": "shared",
+      "loaders": [
+        "fabric",
+        "forge",
+        "neoforge"
+      ]
+    },
+    {
+      "name": "DiscSound",
+      "order": 3,
+      "scope": "shared",
+      "loaders": [
+        "fabric",
+        "forge",
+        "neoforge"
+      ]
+    }
+  ]
+}
