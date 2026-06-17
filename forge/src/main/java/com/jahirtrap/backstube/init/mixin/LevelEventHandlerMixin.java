@@ -61,7 +61,7 @@ public abstract class LevelEventHandlerMixin {
         SoundInstance instance = new BackstubeDiscSoundInstance(soundLocation, config, Vec3.atCenterOf(pos));
         this.playingJukeboxSongs.put(pos, instance);
         mc.getSoundManager().play(instance);
-        mc.gui.setNowPlaying(song.description());
+        mc.gui.hud.setNowPlaying(song.description());
         this.notifyNearbyEntities(this.level, pos, true);
         ci.cancel();
     }
