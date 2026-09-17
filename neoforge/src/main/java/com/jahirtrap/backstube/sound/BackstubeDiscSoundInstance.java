@@ -28,7 +28,7 @@ public class BackstubeDiscSoundInstance extends AbstractSoundInstance {
     }
 
     @Override
-    public WeighedSoundEvents resolve(SoundManager soundManager) {
+    public WeighedSoundEvents getOrResolve(SoundManager soundManager) {
         this.sound = new Sound(this.identifier, ConstantFloat.of(1.0F), ConstantFloat.of(1.0F), 1, Sound.Type.FILE, this.stream, false, this.discAttenuation);
         WeighedSoundEvents events = new WeighedSoundEvents(this.identifier, null);
         events.addSound(this.sound);
