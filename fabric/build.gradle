@@ -91,7 +91,7 @@ publishMods {
         commitish = 'git branch --show-current'.execute().text.trim()
         tagName = rootProject.version
         displayName = rootProject.version
-        //additionalFiles.from { project(":forge").tasks.jarJar.archiveFile }
+        additionalFiles.from { project(":forge").tasks.jarJar.archiveFile }
         additionalFiles.from(project(":neoforge").tasks.jar.archiveFile)
     }
 }
